@@ -1,0 +1,66 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #1a1a1a; /* Qora fon */
+    color: #fff;
+    overflow: hidden;
+}
+
+.content {
+    width: 100%;
+    height: 100vh;
+}
+
+#backgroundCanvas {
+    z-index: 1;
+}
+
+.overlay {
+    z-index: 2;
+}
+
+h1 {
+    font-size: 2.5rem;
+}
+
+.stat-item h2 {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+.stat-item p {
+    font-size: 1.2rem;
+    text-transform: uppercase;
+}
+
+.sidebar {
+    width: 250px;
+    background: #2a2a2a;
+    z-index: 3;
+}
+
+.sidebar h3 {
+    font-size: 1.5rem;
+}
+
+.sidebar ul li {
+    font-size: 1.1rem;
+}
+
+.social-links {
+    width: calc(100% - 2rem); /* Paddingni hisobga olamiz */
+}
+
+.social-links p {
+    font-size: 1rem;
+}
+
+.social-icon {
+    width: 30px;
+    height: 30px;
+}

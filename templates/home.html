@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Ish Tajribam
+{% endblock %}
+
+{% block extra_head %}
+<!-- Agar qo'shimcha CSS yoki JS kerak bo'lsa, bu yerga qo'shishingiz mumkin -->
+{% endblock %}
+
+{% block content %}
+<div class="content position-relative">
+    <canvas id="backgroundCanvas" class="position-absolute w-100 h-100"></canvas>
+    <div class="overlay position-relative">
+        <div class="container">
+            <h1 class="text-uppercase mb-5 border-bottom border-2 border-white d-inline-block pb-2">ISH TAJRIBAM DAVOMIDAGI HARAKATLARIM</h1>
+            <div class="row stats mt-5">
+                <div class="col-md-3 col-sm-6 text-center stat-item">
+                    <h2>10+</h2>
+                    <p>QURILMALAR</p>
+                </div>
+                <div class="col-md-3 col-sm-6 text-center stat-item">
+                    <h2>90+</h2>
+                    <p>VEB DASTURLAR</p>
+                </div>
+                <div class="col-md-3 col-sm-6 text-center stat-item">
+                    <h2>50+</h2>
+                    <p>ILOVALAR</p>
+                </div>
+                <div class="col-md-3 col-sm-6 text-center stat-item">
+                    <h2>1000+</h2>
+                    <p>DASTURLAR</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="sidebar position-fixed top-0 end-0 h-100 p-4">
+        <h3 class="text-uppercase mb-4">MENYU</h3>
+        <ul class="list-unstyled">
+            <li class="mb-3 d-flex align-items-center"><span class="icon me-2">📍</span> Asosiy</li>
+            <li class="mb-3 d-flex align-items-center"><span class="icon me-2">📡</span> Kundalik</li>
+            <li class="mb-3 d-flex align-items-center"><span class="icon me-2">🔗</span> Xizmatlar</li>
+            <li class="mb-3 d-flex align-items-center"><span class="icon me-2">📋</span> Ish tajriba</li>
+            <li class="mb-3 d-flex align-items-center"><span class="icon me-2">📁</span> Portfel</li>
+            <li class="mb-3 d-flex align-items-center"><span class="icon me-2">💬</span> Bog'lanish</li>
+        </ul>
+        <div class="social-links position-absolute bottom-0 mb-4 w-100">
+            <p class="mb-2">Tarmoqlardagi sahifalar</p>
+            <div class="d-flex justify-content-around icons">
+                <a href="#"><img src="{% static 'youtube-icon.png' %}" alt="YouTube" class="social-icon"></a>
+                <a href="#"><img src="{% static 'twitter-icon.png' %}" alt="Twitter" class="social-icon"></a>
+                <a href="#"><img src="{% static 'telegram-icon.png' %}" alt="Telegram" class="social-icon"></a>
+                <a href="#"><img src="{% static 'wifi-icon.png' %}" alt="WiFi" class="social-icon"></a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

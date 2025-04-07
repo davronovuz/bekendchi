@@ -24,6 +24,8 @@ from wagtail.documents import urls as wagtaildocs_urls
 urlpatterns =[
     path('admin/', include(wagtail_admin_urls)),
     path('documents/', include(wagtaildocs_urls)),
+    path('pages/', include(wagtail_urls)),
+    path('', include('apps.shared.urls')),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
