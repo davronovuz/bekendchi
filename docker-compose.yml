@@ -5,7 +5,7 @@ services:
       - .:/app
       - static-data:/app/staticfiles  # Statik fayllar uchun
       - media-data:/app/media  # Media fayllar uchun
-      - db-data:/app/db.sqlite3  # SQLite fayli uchun volume qo‘shildi
+      - db-data:/app  # db.sqlite3 fayli joylashgan papkani ulaymiz
     environment:
       - PYTHONUNBUFFERED=1
     command: >
@@ -35,4 +35,4 @@ networks:
 volumes:
   static-data:
   media-data:
-  db-data:  # SQLite fayli uchun yangi volume qo‘shildi
+  db-data:  # SQLite fayli uchun volume
