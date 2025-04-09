@@ -51,6 +51,14 @@ INSTALLED_APPS = [
 
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    'http://194.242.56.190:7080',
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+    'http://bekendchi.uz',
+    'https://bekendchi.uz',
+]
+
 
 
 MIDDLEWARE = [
