@@ -17,14 +17,11 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path, include
-from wagtail.admin import urls as wagtail_admin_urls
-from wagtail import urls as wagtail_urls
-from wagtail.documents import urls as wagtaildocs_urls
+from django.contrib import admin
 
 urlpatterns =[
-    path('admin/', include(wagtail_admin_urls)),
-    path('documents/', include(wagtaildocs_urls)),
-    path('pages/', include(wagtail_urls)),
+    path('admin/', admin.site.urls),
+    path('tinymce/', include('tinymce.urls')),
     path('', include('apps.shared.urls')),
 ]
 if settings.DEBUG:

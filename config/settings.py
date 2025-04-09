@@ -43,30 +43,15 @@ INSTALLED_APPS = [
 
     # 3rd party apps
     'rest_framework',
-    'wagtail.contrib.forms',
-    'wagtail.contrib.redirects',
-    'wagtail.embeds',
-    'wagtail.sites',
-    'wagtail.users',
-    'wagtail.snippets',
-    'wagtail.documents',
-    'wagtail.images',
-    'wagtail.search',
-    'wagtail.admin',
-    'wagtail',
-    'wagtail.locales',  # Til funksiyalari uchun qo'shildi
-    'modelcluster',
+    'tinymce',
     'taggit',
+
+
+
+
 ]
 
-# Wagtail sozlamalari
-WAGTAIL_SITE_NAME = 'blog'  # Saytingiz nomini bu yerga yozing
-WAGTAIL_I18N_ENABLED = True  # Til funksiyalarini yoqish (agar kerak bo‘lsa)
-WAGTAIL_CONTENT_LANGUAGES = [
-    ('en', 'English'),
-    ('uz', 'Uzbek'),  # O‘zbek tilini qo‘shdim, agar boshqa tillar kerak bo‘lsa qo‘shishingiz mumkin
-]
-LANGUAGES = WAGTAIL_CONTENT_LANGUAGES
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -76,7 +61,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'wagtail.contrib.redirects.middleware.RedirectMiddleware',  # Wagtail redirects middleware qo'shildi
+
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -126,8 +111,35 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Internationalization
-# https://docs.djangoproject.com/en/5.2/topics/i18n/
+
+TINYMCE_DEFAULT_CONFIG = {
+    'height': 360,
+    'width': 800,
+    'cleanup_on_startup': True,
+    'custom_undo_redo_levels': 20,
+    'selector': 'textarea',
+    'theme': 'silver',
+    'plugins': '''
+        textcolor save link image media preview codesample contextmenu
+        table code lists fullscreen  insertdatetime  nonbreaking
+        contextmenu directionality searchreplace wordcount visualblocks
+        visualchars code fullscreen autolink lists  charmap print  hr
+        anchor pagebreak
+        ''',
+    'toolbar1': '''
+        fullscreen preview bold italic underline | fontselect,
+        fontsizeselect  | forecolor backcolor | alignleft alignright |
+        aligncenter alignjustify | indent outdent | bullist numlist table |
+        | link image media | codesample |
+        ''',
+    'contextmenu': 'formats | link image',
+    'menubar': True,
+    'statusbar': True,
+}
+
+
+
+
 
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Asia/Tashkent'
