@@ -1,3 +1,4 @@
+
 services:
   app:
     build: .
@@ -5,40 +6,23 @@ services:
       - .:/app
       - static-data:/app/staticfiles  # Statik fayllar uchun
       - media-data:/app/media  # Media fayllar uchun
-      - db-data:/app  # db.sqlite3 fayli uchun
     environment:
       - PYTHONUNBUFFERED=1
-    command: >
-      sh -c "python manage.py makemigrations &&
-             python manage.py migrate &&
-             gunicorn --bind 0.0.0.0:8005 config.wsgi:application"
     networks:
       - app-network
 
   nginx:
     image: nginx:latest
     ports:
-      - "80:80"    # HTTP uchun
-      - "443:443"  # HTTPS uchun
+      - "7080:7080"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
       - static-data:/app/staticfiles  # Statik fayllar
-      - media-data:/app/media  # Media fayllar
-      - certbot-etc:/etc/letsencrypt  # SSL sertifikatlari
-      - certbot-var:/var/www/certbot  # Certbot tekshiruvi uchun
+      - media-data:/app/media  # Media fayllar (agar kerak bo‘lsa)
     depends_on:
       - app
     networks:
       - app-network
-
-  certbot:
-    image: certbot/certbot
-    volumes:
-      - certbot-etc:/etc/letsencrypt
-      - certbot-var:/var/www/certbot
-    depends_on:
-      - nginx
-    command: certonly --webroot --webroot-path=/var/www/certbot --email your-email@example.com --agree-tos --no-eff-email -d bekendchi.uz
 
 networks:
   app-network:
@@ -47,6 +31,3 @@ networks:
 volumes:
   static-data:
   media-data:
-  db-data:
-  certbot-etc:  # SSL sertifikatlari uchun
-  certbot-var:  # Certbot tekshiruvi uchun
