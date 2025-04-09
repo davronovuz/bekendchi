@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 
-# Migratsiyalarni qo‘llash
+# Django migrations’larni bajarish
 python manage.py makemigrations
 python manage.py migrate
 
-# Gunicorn ni ishga tushirish
+# Gunicorn serverini ishga tushirish
 exec gunicorn --bind 0.0.0.0:8005 config.wsgi:application
