@@ -1,51 +1,260 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
 {% load static %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Portfolio">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Latest compiled and minified CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <script src="https://kit.fontawesome.com/fa62c117c7.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    <title>Boluwatife Fasina</title>
 
-{% block title %}
-Portfolio
-{% endblock %}
+  </head>
+  <body class="light" id="top">
 
-{% block extra_head %}
-<!-- Qo'shimcha CSS yoki JS kerak bo'lsa, bu yerga qo'shishingiz mumkin -->
-{% endblock %}
+    <header class="header center">
+      <h3>
+        <a href="https://fasina-b.github.io/sample-portfolio/" class="link"
+          >BF.</a
+        >
+      </h3>
 
-{% block content %}
-<div class="main-content position-relative">
-    <!-- Sidebar -->
-    <div class="sidebar position-fixed top-0 end-0 h-100 p-4">
-        <h3 class="text-uppercase mb-4">MENYU</h3>
-        <ul class="list-unstyled">
-            <li class="mb-3 d-flex align-items-center"><span class="icon me-2">📍</span> Asosiy</li>
-            <li class="mb-3 d-flex align-items-center"><span class="icon me-2">📡</span> Kundalik</li>
-            <li class="mb-3 d-flex align-items-center"><span class="icon me-2">🔗</span> Xizmatlar</li>
-            <li class="mb-3 d-flex align-items-center"><span class="icon me-2">📋</span> Ish tajriba</li>
-            <li class="mb-3 d-flex align-items-center"><span class="icon me-2">📁</span> Portfel</li>
-            <li class="mb-3 d-flex align-items-center"><span class="icon me-2">💬</span> Bog'lanish</li>
+      <nav class="nav center">
+        <ul class="nav__list center">
+          <li class="nav__list-item">
+            <a class="link link--nav" href="#projects">Portfolio</a>
+          </li>
+          <li class="nav__list-item">
+            <a class="link link--nav" href="#skills">Skills</a>
+          </li>
+          <li class="nav__list-item">
+            <a class="link link--nav" href="#contact">Contact</a>
+          </li>
+
+
         </ul>
-        <div class="social-links position-absolute bottom-0 mb-4 w-100">
-            <p class="mb-2">Tarmoqlardagi sahifalar</p>
-            <div class="d-flex justify-content-around icons">
-                <a href="#"><img src="{% static 'youtube-icon.png' %}" alt="YouTube" class="social-icon"></a>
-                <a href="#"><img src="{% static 'twitter-icon.png' %}" alt="Twitter" class="social-icon"></a>
-                <a href="#"><img src="{% static 'telegram-icon.png' %}" alt="Telegram" class="social-icon"></a>
-                <a href="#"><img src="{% static 'wifi-icon.png' %}" alt="WiFi" class="social-icon"></a>
-            </div>
-        </div>
-    </div>
 
-    <!-- Main Content -->
-    <div class="container h-100 d-flex align-items-center">
-        <div class="row w-100">
-            <!-- Pixelated Image -->
-            <div class="col-md-4 d-flex align-items-center">
-                <img src="{% static 'pixelated-image.png' %}" alt="Pixelated Image" class="pixelated-img">
+        <button type="button" aria-label="toggle theme" class="btn btn--icon">
+          <i aria-hidden="true" id="btn-theme" class="fas fa-moon p-3"></i>
+        </button>
+
+        <button
+          type="button"
+          aria-label="toggle navigation"
+          class="btn btn--icon nav__hamburger"
+        >
+          <i aria-hidden="true" class="fas fa-bars"></i>
+        </button>
+      </nav>
+    </header>
+
+    <main>
+      <!-- About -->
+      <div class="about center d-inline-grid">
+        <div class="row">
+          <div class="col-md-7 col-12 w-auto">
+            <div class="d-none d-sm-block d-md-block">
+              <h1>Hello <span class="wave"> 👋</span> </h1>
             </div>
-            <!-- Text Content -->
-            <div class="col-md-8 d-flex flex-column justify-content-center">
-                <p class="small-text mb-2">O'zimni tanishtirsam</p>
-                <h1 class="main-title text-uppercase">TEXNOLOGIYLARDAN ZAVQLANUVCHI DASTURCHI</h1>
-            </div>
+            <h1> <span class="about__name" style="font-size: 55px !important;">I'm Boluwatife Fasina</span> </h1>
+            <h2 class="about__role mt-3">Full-Stack Developer.</h2>
+            <h2 class="about__role text-decoration-underline">About</h2>
+            <p class="about__desc mt-2">
+              I am a results-driven Full Stack Software Engineer with expertise in .NET technologies and a strong focus on delivering scalable and high-performing applications.
+              I am skilled in developing robust APIs, microservices, and interfaces for seamless integration with internal and client systems with proficiency in C#, .NET Core, ASP.NET, HTML5, VueJs, and JavaScript.
+              I am also skilled in troubleshooting and debugging complex issues, with hands-on experience in providing technical support to customers while also ensuring optimal code quality and performance.
+            </p>
+          </div>
+
+          <div class="col-md-5 d-none d-sm-block d-md-block fade-in-image">
+            <img src="./images/Profile_Image.jpg" class="profile-image" alt="profile page"
+            style="width: 500px;
+            border-radius: 50%; /* This makes the image round */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease-in-out;">
+          </div>
+
         </div>
+
+        <div class="about__contact d-flex flex-column align-items-center justify-content-center">
+          <div>
+            <a href="https://docs.google.com/document/d/1FznQlnwlDTOZ2uzZgCYsc-yJRcIWu8fcRqQ6aMmqKkU/edit?usp=sharing">
+              <span class="btn btn--outline pe-5 ps-5" style="font-size: 20px !important;">Resume</span>
+            </a>
+          </div>
+
+          <div class="pt-4">
+            <a
+              href="http://github.com/fasina-b"
+              aria-label="github"
+              class="link link--icon"
+            >
+              <i aria-hidden="true" class="fab fa-github"></i>
+            </a>
+
+            <a
+              href="https://www.linkedin.com/in/boluayofasina/"
+              aria-label="linkedin"
+              class="link link--icon"
+            >
+              <i aria-hidden="true" class="fab fa-linkedin"></i>
+            </a>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Projects -->
+      <section id="projects" class="section projects">
+        <h2 class="section__title">Portfolio</h2>
+
+        <div class="projects__grid">
+          <div class="project">
+            <h3>Project 1</h3>
+            <p class="project__description fw-bolder pb-2">
+              EduCreate: A video presentation of an E-learing Platform
+            </p>
+            <p class="project__description">The Impact of Nigeria’s poor educational system on the creative industry and its role in Unemployment</p>
+
+
+            <ul class="project__stack">
+              <img src="./images/youtube.avif" style="width: 200px;"  alt="youtube">
+            </ul>
+            <a
+              href="https://youtu.be/vKhj_O4FN9E"
+              aria-label="live preview"
+              class="link link--icon"
+            >
+              <i aria-hidden="true" class="fas fa-external-link-alt"></i>
+            </a>
+          </div>
+
+          <div class="project">
+            <h3>Project 2</h3>
+
+            <p class="project__description fw-bolder pb-2">
+              SlideDeck: E-learning platforms for budding creative
+            </p>
+            <p class="project__description">A mobile app that features gamified learning experiences and more into creative education.
+            </p>
+            <ul class="project__stack">
+              <img src="./images/Slidedeck.png" style="width: 230px;" class="m-4 pt-3 pb-2 w-100"  alt="pichdeck">
+            </ul>
+            <a
+              href="https://docs.google.com/presentation/d/1bjYbDQxQjNUT-0MmHI-o1xYEJxZEUTldW6MtKkulues/edit#slide=id.p14"
+              aria-label="live preview"
+              class="link link--icon"
+            >
+              <i aria-hidden="true" class="fas fa-external-link-alt"></i>
+            </a>
+          </div>
+
+          <div class="project">
+            <h3>Project 3</h3>
+
+            <p class="project__description fw-bolder pb-2">
+              Elevator Pitch
+            </p>
+            <p class="project__description">A fullstack developer with a flare for creating unique designs
+            </p>
+            <ul class="project__stack">
+              <iframe class="m-4 pt-3 pb-2 w-100" src="https://www.youtube.com/embed/p2zuz1SjAXg" frameborder="0" allowfullscreen></iframe>
+            </ul>
+            <a
+              href="https://www.youtube.com/embed/p2zuz1SjAXg"
+              aria-label="live preview"
+              class="link link--icon"
+            >
+              <i aria-hidden="true" class="fas fa-external-link-alt"></i>
+            </a>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Skills -->
+      <section class="section skills" id="skills">
+        <h2 class="section__title">Skills</h2>
+        <ul class="skills__list">
+          <li class="skills__list-item btn btn--plain">HTML</li>
+          <li class="skills__list-item btn btn--plain">CSS</li>
+          <li class="skills__list-item btn btn--plain">SCSS</li>
+          <li class="skills__list-item btn btn--plain">JavaScript</li>
+          <li class="skills__list-item btn btn--plain">TypeScript</li>
+          <li class="skills__list-item btn btn--plain">React</li>
+          <li class="skills__list-item btn btn--plain">Redux</li>
+          <li class="skills__list-item btn btn--plain">Git</li>
+          <li class="skills__list-item btn btn--plain">CI/CD</li>
+          <li class="skills__list-item btn btn--plain">VueJs</li>
+          <li class="skills__list-item btn btn--plain">Pinia</li>
+          <li class="skills__list-item btn btn--plain">Python 3</li>
+          <li class="skills__list-item btn btn--plain">SQL</li>
+          <li class="skills__list-item btn btn--plain">AWS</li>
+          <li class="skills__list-item btn btn--plain">Docker</li>
+          <li class="skills__list-item btn btn--plain">MongoDB</li>
+          <li class="skills__list-item btn btn--plain">jQuery</li>
+          <li class="skills__list-item btn btn--plain">ASP.NET</li>
+          <li class="skills__list-item btn btn--plain">Bootstrap</li>
+          <li class="skills__list-item btn btn--plain">NodeJs</li>
+          <li class="skills__list-item btn btn--plain">SASS</li>
+        </ul>
+
+      </section>
+
+      <!-- Contact -->
+      <section class="section contact center mt-5" id="contact">
+
+        <div class="contact-form-container">
+          <h2 class="mb-4">Contact Me</h2>
+          <form id="contact-form">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="message">Message:</label>
+            <textarea id="message" name="message" rows="4" required></textarea>
+
+            <button type="submit">
+              <span class="btn btn--outline pe-5 ps-5" style="font-size: 20px !important;">Email me</span>
+            </button>
+          </form>
+        </div>
+
+      </section>
+    </main>
+
+    <footer class="footer">
+      <a
+        href="https://fasina-b.github.io/sample-portfolio/"
+        class="link footer__link mb-4"  style="font-size: 20px !important;"
+      >
+        @BoluFash
+      </a>
+      <div class="social-icons mt-3 justify-content-center">
+        <a href="https://www.facebook.com/bohluwahtyfe.fahshinah" target="_blank"><i class="bi bi-facebook"></i></a>
+        <a href="https://twitter.com/at_tife" target="_blank"><i class="bi bi-twitter"></i></a>
+        <a href="https://www.linkedin.com/in/boluayofasina/" target="_blank"><i class="bi bi-linkedin"></i></a>
+        <!-- Add more social media icons and links as needed -->
+      </div>
+    </footer>
+
+    <div class="scroll-container">
+    <div class="scroll-top">
+      <a aria-label="Scroll up" href="#top">
+        <i aria-hidden="true" class="fas fa-arrow-up"></i>
+      </a>
     </div>
-</div>
-{% endblock %}
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="{% static 'js/script.js' %}"></script>
+  </body>
+</html>

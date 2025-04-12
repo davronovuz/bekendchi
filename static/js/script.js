@@ -1,61 +1,103 @@
-const canvas = document.getElementById('backgroundCanvas');
-const ctx = canvas.getContext('2d');
+const body = document.body
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+const btnTheme = document.querySelector('.fa-moon')
+const btnHamburger = document.querySelector('.fa-bars')
 
-const lines = [];
-const numLines = 50;
-
-class Line {
-    constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.length = Math.random() * 50 + 20;
-        this.speedX = (Math.random() - 0.5) * 2;
-        this.speedY = (Math.random() - 0.5) * 2;
-        this.angle = Math.random() * Math.PI * 2;
-    }
-
-    update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
-
-        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
-        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
-    }
-
-    draw() {
-        ctx.beginPath();
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-        ctx.lineWidth = 1;
-        ctx.moveTo(this.x, this.y);
-        ctx.lineTo(
-            this.x + Math.cos(this.angle) * this.length,
-            this.y + Math.sin(this.angle) * this.length
-        );
-        ctx.stroke();
-    }
+const addThemeClass = (bodyClass, btnClass) => {
+  body.classList.add(bodyClass)
+  btnTheme.classList.add(btnClass)
 }
 
-for (let i = 0; i < numLines; i++) {
-    lines.push(new Line());
+const getBodyTheme = localStorage.getItem('portfolio-theme')
+const getBtnTheme = localStorage.getItem('portfolio-btn-theme')
+
+addThemeClass(getBodyTheme, getBtnTheme)
+
+const isDark = () => body.classList.contains('dark')
+
+const setTheme = (bodyClass, btnClass) => {
+
+	body.classList.remove(localStorage.getItem('portfolio-theme'))
+	btnTheme.classList.remove(localStorage.getItem('portfolio-btn-theme'))
+
+  addThemeClass(bodyClass, btnClass)
+
+	localStorage.setItem('portfolio-theme', bodyClass)
+	localStorage.setItem('portfolio-btn-theme', btnClass)
 }
 
-function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+const toggleTheme = () =>
+	isDark() ? setTheme('light', 'fa-moon') : setTheme('dark', 'fa-sun')
 
-    lines.forEach(line => {
-        line.update();
-        line.draw();
-    });
+btnTheme.addEventListener('click', toggleTheme)
 
-    requestAnimationFrame(animate);
+const displayList = () => {
+	const navUl = document.querySelector('.nav__list')
+
+	if (btnHamburger.classList.contains('fa-bars')) {
+		btnHamburger.classList.remove('fa-bars')
+		btnHamburger.classList.add('fa-times')
+		navUl.classList.add('display-nav-list')
+	} else {
+		btnHamburger.classList.remove('fa-times')
+		btnHamburger.classList.add('fa-bars')
+		navUl.classList.remove('display-nav-list')
+	}
 }
 
-animate();
+btnHamburger.addEventListener('click', displayList)
 
-window.addEventListener('resize', () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+const scrollUp = () => {
+	const btnScrollTop = document.querySelector('.scroll-top')
+
+	if (
+		body.scrollTop > 500 ||
+		document.documentElement.scrollTop > 500
+	) {
+		btnScrollTop.style.display = 'block'
+	} else {
+		btnScrollTop.style.display = 'none'
+	}
+}
+
+document.addEventListener('scroll', scrollUp)
+
+
+
+document.getElementById("contact-form").addEventListener("submit", function(event) {
+	event.preventDefault();
+
+	// Get form values
+	var name = document.getElementById("name").value;
+	var email = document.getElementById("email").value;
+	var message = document.getElementById("message").value;
+
+	// Validate form fields (add more validation if needed)
+	if (name === "" || email === "" || message === "") {
+		alert("Please fill in all fields.");
+		return;
+	}
+
+	// Send form data to the server
+	fetch("send_email.php", {
+		method: "POST",
+		body: JSON.stringify({ name, email, message })
+	})
+	.then(response => response.text())
+	.then(result => {
+		if (result === "success") {
+			alert("Message sent successfully!");
+			// Clear form fields
+			document.getElementById("name").value = "";
+			document.getElementById("email").value = "";
+			document.getElementById("message").value = "";
+		} else {
+			alert("An error occurred. Please try again later.");
+		}
+	});
 });
+
+
+
+
+
