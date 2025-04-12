@@ -20,7 +20,7 @@ from django.urls import path, include
 from django.contrib import admin
 
 urlpatterns =[
-    path('admin/', admin.site.urls),
+    path('zj/', admin.site.urls),
     path('tinymce/', include('tinymce.urls')),
     path('', include('apps.shared.urls')),
 ]
