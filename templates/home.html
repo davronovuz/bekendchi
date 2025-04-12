@@ -2,39 +2,16 @@
 {% load static %}
 
 {% block title %}
-Ish Tajribam
+Portfolio
 {% endblock %}
 
 {% block extra_head %}
-<!-- Agar qo'shimcha CSS yoki JS kerak bo'lsa, bu yerga qo'shishingiz mumkin -->
+<!-- Qo'shimcha CSS yoki JS kerak bo'lsa, bu yerga qo'shishingiz mumkin -->
 {% endblock %}
 
 {% block content %}
-<div class="content position-relative">
-    <canvas id="backgroundCanvas" class="position-absolute w-100 h-100"></canvas>
-    <div class="overlay position-relative">
-        <div class="container">
-            <h1 class="text-uppercase mb-5 border-bottom border-2 border-white d-inline-block pb-2">ISH TAJRIBAM DAVOMIDAGI HARAKATLARIM</h1>
-            <div class="row stats mt-5">
-                <div class="col-md-3 col-sm-6 text-center stat-item">
-                    <h2>10+</h2>
-                    <p>QURILMALAR</p>
-                </div>
-                <div class="col-md-3 col-sm-6 text-center stat-item">
-                    <h2>90+</h2>
-                    <p>VEB DASTURLAR</p>
-                </div>
-                <div class="col-md-3 col-sm-6 text-center stat-item">
-                    <h2>50+</h2>
-                    <p>ILOVALAR</p>
-                </div>
-                <div class="col-md-3 col-sm-6 text-center stat-item">
-                    <h2>1000+</h2>
-                    <p>DASTURLAR</p>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="main-content position-relative">
+    <!-- Sidebar -->
     <div class="sidebar position-fixed top-0 end-0 h-100 p-4">
         <h3 class="text-uppercase mb-4">MENYU</h3>
         <ul class="list-unstyled">
@@ -52,6 +29,21 @@ Ish Tajribam
                 <a href="#"><img src="{% static 'twitter-icon.png' %}" alt="Twitter" class="social-icon"></a>
                 <a href="#"><img src="{% static 'telegram-icon.png' %}" alt="Telegram" class="social-icon"></a>
                 <a href="#"><img src="{% static 'wifi-icon.png' %}" alt="WiFi" class="social-icon"></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container h-100 d-flex align-items-center">
+        <div class="row w-100">
+            <!-- Pixelated Image -->
+            <div class="col-md-4 d-flex align-items-center">
+                <img src="{% static 'pixelated-image.png' %}" alt="Pixelated Image" class="pixelated-img">
+            </div>
+            <!-- Text Content -->
+            <div class="col-md-8 d-flex flex-column justify-content-center">
+                <p class="small-text mb-2">O'zimni tanishtirsam</p>
+                <h1 class="main-title text-uppercase">TEXNOLOGIYLARDAN ZAVQLANUVCHI DASTURCHI</h1>
             </div>
         </div>
     </div>
