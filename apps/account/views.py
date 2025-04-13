@@ -23,7 +23,7 @@ def custom_404(request, exception=None):
 class SignupView(View):
     def get(self, request):
         form = CustomUserCreationForm()
-        return render(request, 'signup.html', {'form': form})
+        return render(request, 'authorization/signup.html', {'form': form})
 
     def post(self, request):
         form = CustomUserCreationForm(request.POST)
@@ -37,7 +37,7 @@ class SignupView(View):
 class LoginView(View):
     def get(self, request):
         form = AuthenticationForm()
-        return render(request, 'login.html', {'form': form})
+        return render(request, 'authorization/login.html', {'form': form})
 
     def post(self, request):
         form = AuthenticationForm(request, data=request.POST)
