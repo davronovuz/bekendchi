@@ -1,10 +1,61 @@
 {% extends 'base.html' %}
-{% block title %} Bosh sahifa {% endblock title %}
-
-
+{% block title %}Bosh Sahifa{% endblock %}
 
 {% block content %}
+<div class="row mt-5">
+  <!-- Hero Section -->
+  <div class="col-12 text-center">
+    <h1 class="display-4">Xush Kelibsiz!</h1>
+    <p class="lead">Bu mening shaxsiy saytim — portfolio, blog va yangiliklarimni bu yerda ulashaman.</p>
+    <a href="/portfolio" class="btn btn-outline-primary btn-lg mt-3">Portfoliomni Ko‘rish</a>
+    <a href="/blog" class="btn btn-outline-secondary btn-lg mt-3">Blogga O‘tish</a>
+  </div>
+</div>
 
-<h2> Salom bu bosh sahifa </h2>
+<!-- About Preview -->
+<div class="row mt-5">
+  <div class="col-md-6">
+    <h2>Men Haqimda</h2>
+    <p>Salom! Men [Ismingiz], dasturchi va kreativ kontent yaratuvchisiman. Bu yerda o‘zimning loyihalarim va tajribamni baham ko‘raman.</p>
+    <a href="/about" class="btn btn-link">Batafsil...</a>
+  </div>
+  <div class="col-md-6">
+    <img src="https://via.placeholder.com/500x300" class="img-fluid rounded" alt="About Image">
+  </div>
+</div>
 
+<!-- Blog Preview -->
+<div class="row mt-5">
+  <h2>So‘nggi Maqolalar</h2>
+  <div class="col-md-4">
+    <div class="card bg-dark text-white">
+      <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="Blog Post">
+      <div class="card-body">
+        <h5 class="card-title">Maqola Sarlavhasi 1</h5>
+        <p class="card-text">Bu yerda maqolaning qisqacha tavsifi bo‘ladi.</p>
+        <a href="#" class="btn btn-outline-light">O‘qish</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card bg-dark text-white">
+      <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="Blog Post">
+      <div class="card-body">
+        <h5 class="card-title">Maqola Sarlavhasi 2</h5>
+        <p class="card-text">Bu yerda maqolaning qisqacha tavsifi bo‘ladi.</p>
+        <a href="#" class="btn btn-outline-light">O‘qish</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card bg-dark text-white">
+      <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="Blog Post">
+      <div class="card-body">
+        <h5 class="card-title">Maqola Sarlavhasi 3</h5>
+        <p class="card-text">Bu yerda maqolaning qisqacha tavsifi bo‘ladi.</p>
+        <a href="#" class="btn btn-outline-light">O‘qish</a>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
