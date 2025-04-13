@@ -4,6 +4,6 @@ from django.urls import path
 
 
 urlpatterns = [
-    path('haqida/', portfolio_view, name='haqimda'),
+    path('djz/', portfolio_view, name='haqimda'),
 
 ]
