@@ -163,10 +163,10 @@
           <!-- Auth Buttons -->
           <div class="d-flex">
             {% if user.is_authenticated %}
-              <a href="{% url 'logout' %}" class="btn btn-outline-success btn-auth">Chiqish</a>
+              <a href="{% url 'lt' %}" class="btn btn-outline-success btn-auth">Chiqish</a>
             {% else %}
-              <a href="{% url 'login' %}" class="btn btn-outline-success btn-auth">Kirish</a>
-              <a href="{% url 'signup' %}" class="btn btn-outline-success btn-auth">Ro'yhatdan o'tish</a>
+              <a href="{% url 'ln' %}" class="btn btn-outline-success btn-auth">Kirish</a>
+              <a href="{% url 'sp' %}" class="btn btn-outline-success btn-auth">Ro'yhatdan o'tish</a>
             {% endif %}
           </div>
         </div>
@@ -186,7 +186,7 @@
           © 2025 <a href="/">Ilhom Galaktikasi</a>. Har bir g‘oya – yangi yulduz! |
           <a href="/portfolio">Portfolio</a> |
           <a href="{% url 'blog_list' %}">Fikrlar</a> |
-          <a href="{% url 'login' %}">Kirish</a>
+          <a href="{% url 'ln' %}">Kirish</a>
         </p>
       </div>
     </footer>
