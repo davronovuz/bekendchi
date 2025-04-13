@@ -23,6 +23,8 @@ urlpatterns =[
     path('zj/', admin.site.urls),
     path('tinymce/', include('tinymce.urls')),
     path('', include('apps.shared.urls')),
+    path('blog/', include('apps.blog.urls')),
+
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
