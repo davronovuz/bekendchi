@@ -149,7 +149,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <a class="nav-link" href="/portfolio">Portlio</a>
+              <a class="nav-link" href="{% url 'haqimda' %}">Portfolio</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{% url 'blog_list' %}">Maqolalar</a>
@@ -184,7 +184,7 @@
       <div class="container">
         <p>
           © 2025 <a href="/">Ilhom Galaktikasi</a>. Har bir g‘oya – yangi yulduz! |
-          <a href="/portfolio">Portfolio</a> |
+          <a href="{% 'haqimda' %}">Portfolio</a> |
           <a href="{% url 'blog_list' %}">Fikrlar</a> |
           <a href="{% url 'ln' %}">Kirish</a>
         </p>

@@ -25,6 +25,7 @@ urlpatterns =[
     path('', include('apps.shared.urls')),
     path('blog/', include('apps.blog.urls')),
     path('account/', include('apps.account.urls')),
+    path('port/', include('apps.portolio.urls')),
 
 ]
 if settings.DEBUG:

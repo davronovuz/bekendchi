@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% block title %}Portfolio - G'olibjon{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-5 position-relative">
+  <!-- Yulduzli fon effekti -->
+  <div class="stars-background"></div>
+
+  <!-- Profil bo‘limi -->
+  <div class="row align-items-center min-vh-100">
+    <!-- Profil rasm -->
+    <div class="col-md-4 text-center" data-aos="fade-right">
+      <div class="profile-image-wrapper">
+        <img src="#" alt="G'olibjon" class="profile-image">
+      </div>
+    </div>
+    <!-- Ma'lumotlar -->
+    <div class="col-md-8 text-md-start text-center" data-aos="fade-left">
+      <h1 class="display-3 fw-bold mb-3 neon-text" style="font-family: 'Orbitron', sans-serif;">
+        G'olibjon – Backend Python Dasturchisi
+      </h1>
+      <p class="lead mb-4" style="color: #ffffff; font-family: 'Poppins', sans-serif;">
+        IT sohasida 3.5 yillik tajribaga ega Backend Python dasturchisiman. Shunchaki kod yozish yoqadi!
+      </p>
+      <div class="social-links mb-4">
+        <a href="https://www.github.com/davronovuz" target="_blank" class="btn btn-outline-light btn-sm me-2 pulse" style="border-color: #00adb5; color: #00adb5;">
+          <i class="fab fa-github"></i> GitHub
+        </a>
+        <a href="https://www.telegram.org/bekendchi" target="_blank" class="btn btn-outline-light btn-sm pulse" style="border-color: #00adb5; color: #00adb5;">
+          <i class="fab fa-telegram"></i> Telegram
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tajriba va texnologiyalar -->
+  <div class="row mt-5 py-5">
+    <div class="col-12 text-center" data-aos="fade-up">
+      <h2 class="fw-bold mb-4 neon-text" style="font-family: 'Orbitron', sans-serif;">
+        Texnologiyalar va Tajriba
+      </h2>
+      <p class="mx-auto mb-5" style="max-width: 800px; color: #ffffff; font-family: 'Poppins', sans-serif;">
+        Men quyidagi texnologiyalarda 3.5 yillik tajribaga egaman va ulardan samarali foydalana olaman:
+      </p>
+      <div class="tech-stack d-flex flex-wrap justify-content-center gap-3">
+        {% for tech in tech_stack %}
+        <span class="tech-badge" style="font-family: 'Poppins', sans-serif;">{{ tech }}</span>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .stars-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(0, 173, 181, 0.1), transparent);
+    animation: slide 20s infinite linear;
+  }
+  @keyframes slide {
+    0% { background-position: 0 0; }
+    100% { background-position: 1000px 0; }
+  }
+  .neon-text {
+    background: linear-gradient(90deg, #00adb5, #ffffff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .profile-image-wrapper {
+    position: relative;
+    width: 250px;
+    height: 250px;
+    margin: 0 auto;
+  }
+  .profile-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid #00adb5;
+    box-shadow: 0 0 20px rgba(0, 173, 181, 0.5);
+    transition: transform 0.3s ease;
+  }
+  .profile-image:hover {
+    transform: scale(1.05);
+  }
+  .tech-stack {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .tech-badge {
+    background-color: rgba(0, 173, 181, 0.2);
+    color: #00adb5;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+  }
+  .tech-badge:hover {
+    background-color: #00adb5;
+    color: #121212;
+    transform: translateY(-3px);
+  }
+  .social-links .btn {
+    font-family: 'Orbitron', sans-serif;
+  }
+  .pulse:hover {
+    animation: pulse 1s infinite;
+  }
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+  .btn-outline-light:hover {
+    background-color: #00adb5;
+    color: #121212;
+    box-shadow: 0 0 15px rgba(0, 173, 181, 0.6);
+  }
+</style>
+{% endblock %}
