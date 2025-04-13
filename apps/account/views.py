@@ -57,3 +57,22 @@ class LogoutView(View):
         logout(request)
         messages.success(request, "Tizimdan muvaffaqiyatli chiqdingiz!")
         return render(request, 'authorization/logout.html')
+
+
+
+
+class Custom404Middleware:
+    """
+    Middleware to handle 404 errors and redirect to a custom 404.html page.
+    """
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        
+        # Check if the response status code is 404
+        if response.status_code == 404:
+            return render(request, '404.html', status=404)
+        
+        return response
