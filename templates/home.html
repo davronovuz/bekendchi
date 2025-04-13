@@ -2,60 +2,56 @@
 {% block title %}Bosh Sahifa{% endblock %}
 
 {% block content %}
-<div class="row mt-5">
-  <!-- Hero Section -->
-  <div class="col-12 text-center">
-    <h1 class="display-4">Assalomu alaykum </h1>
-    <p class="lead">Qiziqish bilimdan kuchliroq .</p>
-    <a href="/portfolio" class="btn btn-outline-primary btn-lg mt-3">Portfoliomni Ko‘rish</a>
-    <a href="/blog" class="btn btn-outline-secondary btn-lg mt-3">Blogga O‘tish</a>
-  </div>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Pacifico&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    color: #fff;
+    font-family: 'Orbitron', sans-serif;
+  }
+  .hero {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 2rem;
+  }
+  .hero h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+  .hero p {
+    font-size: 1.5rem;
+    font-family: 'Pacifico', cursive;
+  }
+</style>
+
+<div class="hero">
+  <h1 id="banner-title">Salom, Dasturchi!</h1>
+  <p id="banner-text">Kod bu – zamonaviy she’riyat.</p>
 </div>
 
-<!-- About Preview -->
-<div class="row mt-5">
-  <div class="col-md-6">
-    <h2>Men Haqimda</h2>
-    <p>Salom! Men G'olibjon , dasturchi va kontent yaratuvchisiman. Bu yerda o‘zimning loyihalarim va tajribamni baham ko‘raman.</p>
-    <a href="/about" class="btn btn-link">Batafsil...</a>
-  </div>
-  <div class="col-md-6">
-    <img src="https://via.placeholder.com/500x300" class="img-fluid rounded" alt="About Image">
-  </div>
-</div>
+<script>
+  const banners = [
+    { title: "Algoritmlar yurak uradi!", text: "Kreativlik — bu kodning yuragi." },
+    { title: "Kod bu – zamonaviy she’riyat.", text: "Har satr – yangi bir fikr." },
+    { title: "Qora fon, oq matn – bu mening sahnam.", text: "Har kod orqasida orzu yotadi." },
+    { title: "0 va 1 orasida million imkoniyat yashiringan.", text: "Kod – bu ijodning eng sof ko‘rinishi." },
+    { title: "Fikrni ifodalashning yangi tili: JavaScript.", text: "Frontend – bu sahnadagi ijro." },
+    { title: "Terminal – bu ssenariy yoziladigan sahna.", text: "Buyruqlar – ijodiy gaplar." },
+    { title: "Kodlash bu sehr emas, bu tartiblangan g‘oya.", text: "Xar bir funksiya — mo‘jiza." },
+    { title: "Kod satrlari – orzularni quradigan g‘ishtlar.", text: "Orzularni bajaramiz, kompilyatsiya qilib." },
+    { title: "Back-end – bu sehrgarlar yashaydigan joy.", text: "Soxta narsa yo‘q, faqat logika." },
+    { title: "Bug’lar ketadi, ammo tajriba qoladi.", text: "Har xatolik – yangi dars." }
+  ];
 
-<!-- Blog Preview -->
-<div class="row mt-5">
-  <h2>So‘nggi Maqolalar</h2>
-  <div class="col-md-4">
-    <div class="card bg-dark text-white">
-      <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="Blog Post">
-      <div class="card-body">
-        <h5 class="card-title">Maqola Sarlavhasi 1</h5>
-        <p class="card-text">Bu yerda maqolaning qisqacha tavsifi bo‘ladi.</p>
-        <a href="#" class="btn btn-outline-light">O‘qish</a>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-4">
-    <div class="card bg-dark text-white">
-      <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="Blog Post">
-      <div class="card-body">
-        <h5 class="card-title">Maqola Sarlavhasi 2</h5>
-        <p class="card-text">Bu yerda maqolaning qisqacha tavsifi bo‘ladi.</p>
-        <a href="#" class="btn btn-outline-light">O‘qish</a>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-4">
-    <div class="card bg-dark text-white">
-      <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="Blog Post">
-      <div class="card-body">
-        <h5 class="card-title">Maqola Sarlavhasi 3</h5>
-        <p class="card-text">Bu yerda maqolaning qisqacha tavsifi bo‘ladi.</p>
-        <a href="#" class="btn btn-outline-light">O‘qish</a>
-      </div>
-    </div>
-  </div>
-</div>
+  const randomBanner = banners[Math.floor(Math.random() * banners.length)];
+  document.getElementById('banner-title').innerText = randomBanner.title;
+  document.getElementById('banner-text').innerText = randomBanner.text;
+</script>
 {% endblock %}
