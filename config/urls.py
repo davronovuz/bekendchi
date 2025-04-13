@@ -24,6 +24,7 @@ urlpatterns =[
     path('tinymce/', include('tinymce.urls')),
     path('', include('apps.shared.urls')),
     path('blog/', include('apps.blog.urls')),
+    path('account/', include('apps.account.urls')),
 
 ]
 if settings.DEBUG:

@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}404 - Sahifa topilmadi{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5 text-center">
+  <div class="card bg-dark text-white shadow-lg border-0 rounded-4 mx-auto" style="max-width: 600px; border: 2px solid #00adb5;" data-aos="zoom-in">
+    <div class="card-body p-5">
+      <div class="mb-4">
+        <i class="bi bi-exclamation-triangle display-1" style="color: #00adb5;"></i>
+      </div>
+      <h1 class="fw-bold mb-4" style="color: #00adb5;">404 - Sahifa topilmadi!</h1>
+      <p class="text-muted mb-4">Afsuski, siz qidirgan sahifa mavjud emas yoki olib tashlangan bo‘lishi mumkin.</p>
+      <p class="text-muted mb-4">Balki noto‘g‘ri yo‘lga kirib qoldingiz? Xavotirlanmang, sizni to‘g‘ri yo‘lga qaytaraman!</p>
+      <div class="d-flex justify-content-center gap-3 flex-wrap">
+        <a href="{% url 'home' %}" class="btn btn-outline-light py-2 px-4" style="border-color: #00adb5; color: #00adb5;">Bosh sahifa</a>
+        <a href="{% url 'blog_list' %}" class="btn btn-outline-secondary py-2 px-4">Blog</a>
+        <a href="{% url 'login' %}" class="btn btn-outline-primary py-2 px-4">Kirish</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 173, 181, 0.4) !important;
+  }
+  .btn-outline-light:hover {
+    background-color: #00adb5;
+    color: #fff;
+    border-color: #00adb5;
+  }
+  .btn-outline-secondary:hover {
+    background-color: #333;
+    color: #00adb5;
+  }
+  .btn-outline-primary:hover {
+    background-color: #00adb5;
+    color: #fff;
+  }
+</style>
+
+<!-- AOS animatsiyasi uchun -->
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>AOS.init();</script>
+{% endblock %}
