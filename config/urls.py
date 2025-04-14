@@ -16,8 +16,12 @@ Including another URLconf
 """
 from django.conf import settings
 from django.conf.urls.static import static
+from django.shortcuts import render
 from django.urls import path, include
 from django.contrib import admin
+
+
+handler404 = lambda request, exception: render(request, '404.html', status=404)
 
 urlpatterns =[
     path('zj/', admin.site.urls),
