@@ -29,6 +29,7 @@ urlpatterns =[
     path('', include('apps.shared.urls')),
     path('blog/', include('apps.blog.urls')),
     path('account/', include('apps.account.urls')),
+    path('problems/', include('problems.urls')),
 
 
 ]

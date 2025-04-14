@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'apps.blog',
     'apps.portfolio',
     'apps.shared',
+    'problems',
 
     # 3rd party apps
     'rest_framework',
