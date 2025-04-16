@@ -4,78 +4,186 @@
 {% block content %}
 <div class="container-fluid py-5 position-relative">
   <!-- Yulduzli fon effekti -->
-  <div class="stars-background"></div>
-
-  <!-- Profil bo‘limi -->
-  <div class="row align-items-center min-vh-100">
-    <!-- Profil rasm -->
-    <div class="col-md-4 text-center" data-aos="fade-right">
-      <div class="profile-image-wrapper">
-        <img src="#" alt="G'olibjon" class="profile-image">
-      </div>
-    </div>
-    <!-- Ma'lumotlar -->
-    <div class="col-md-8 text-md-start text-center" data-aos="fade-left">
-      <h1 class="display-3 fw-bold mb-3 neon-text" style="font-family: 'Orbitron', sans-serif;">
-        G'olibjon – Backend Python Dasturchisi
-      </h1>
-      <p class="lead mb-4" style="color: #ffffff; font-family: 'Poppins', sans-serif;">
-        IT sohasida 3.5 yillik tajribaga ega Backend Python dasturchisiman. Shunchaki kod yozish yoqadi!
-      </p>
-      <div class="social-links mb-4">
-        <a href="https://www.github.com/davronovuz" target="_blank" class="btn btn-outline-light btn-sm me-2 pulse" style="border-color: #00adb5; color: #00adb5;">
-          <i class="fab fa-github"></i> GitHub
-        </a>
-        <a href="https://www.telegram.org/bekendchi" target="_blank" class="btn btn-outline-light btn-sm pulse" style="border-color: #00adb5; color: #00adb5;">
-          <i class="fab fa-telegram"></i> Telegram
-        </a>
-      </div>
-    </div>
+  <div class="stars-background">
+    <div class="stars-layer layer1"></div>
+    <div class="stars-layer layer2"></div>
+    <div class="stars-layer layer3"></div>
   </div>
 
-  <!-- Tajriba va texnologiyalar -->
-  <div class="row mt-5 py-5">
-    <div class="col-12 text-center" data-aos="fade-up">
-      <h2 class="fw-bold mb-4 neon-text" style="font-family: 'Orbitron', sans-serif;">
-        Texnologiyalar va Tajriba
-      </h2>
-      <p class="mx-auto mb-5" style="max-width: 800px; color: #ffffff; font-family: 'Poppins', sans-serif;">
-        Men quyidagi texnologiyalarda 3.5 yillik tajribaga egaman va ulardan samarali foydalana olaman:
-      </p>
-      <div class="tech-stack d-flex flex-wrap justify-content-center gap-3">
-        {% for tech in tech_stack %}
-        <span class="tech-badge" style="font-family: 'Poppins', sans-serif;">{{ tech }}</span>
-        {% endfor %}
+  <!-- Yuqori qism: Profil va Texnologiyalar -->
+  <div class="row min-vh-100 position-relative align-items-center">
+    <!-- Profil bo‘limi (Chap yarmi) -->
+    <div class="col-md-6 d-flex align-items-center justify-content-center" data-aos="fade-right">
+      <div class="text-md-start text-center">
+        <div class="profile-image-wrapper tilt-effect mb-4">
+          <img src="#" alt="G'olibjon" class="profile-image">
+        </div>
+        <h1 class="display-3 fw-bold mb-3 neon-text" style="font-family: 'Orbitron', sans-serif;">
+          G'olibjon – Backend Python Dasturchisi
+        </h1>
+        <p class="lead mb-4" style="color: #ffffff; font-family: 'Poppins', sans-serif;">
+          IT sohasida 3.5 yillik tajribaga ega Backend Python dasturchisiman. Shunchaki kod yozish yoqadi!
+        </p>
+        <div class="social-links mb-4">
+          <a href="https://www.github.com/davronovuz" target="_blank" class="btn btn-outline-light btn-sm me-2 neon-btn-outline pulse">
+            <i class="fab fa-github"></i> GitHub
+          </a>
+          <a href="https://www.telegram.org/bekendchi" target="_blank" class="btn btn-outline-light btn-sm neon-btn-outline pulse">
+            <i class="fab fa-telegram"></i> Telegram
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Texnologiyalar bo‘limi (O‘ng yarmi) -->
+    <div class="col-md-6 d-flex align-items-center justify-content-center" data-aos="fade-left">
+      <div class="tech-orbit-section">
+        <h2 class="fw-bold mb-5 neon-text text-center" style="font-family: 'Orbitron', sans-serif;">
+          Foydalanadigan Texnologiyalarim
+        </h2>
+        <div class="tech-orbit-container">
+          <div class="tech-orbit">
+            <div class="tech-item" style="--i: 1;">
+              <span class="tech-name neon-text">Python</span>
+              <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/python.svg" alt="Python" class="tech-logo">
+            </div>
+            <div class="tech-item" style="--i: 2;">
+              <span class="tech-name neon-text">Django</span>
+              <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/django.svg" alt="Django" class="tech-logo">
+            </div>
+            <div class="tech-item" style="--i: 3;">
+              <span class="tech-name neon-text">DRF</span>
+              <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/django-rest-framework.svg" alt="DRF" class="tech-logo">
+            </div>
+            <div class="tech-item" style="--i: 4;">
+              <span class="tech-name neon-text">FastAPI</span>
+              <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/fastapi.svg" alt="FastAPI" class="tech-logo">
+            </div>
+            <div class="tech-item" style="--i: 5;">
+              <span class="tech-name neon-text">PostgreSQL</span>
+              <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/postgresql.svg" alt="PostgreSQL" class="tech-logo">
+            </div>
+            <div class="tech-item" style="--i: 6;">
+              <span class="tech-name neon-text">SQL</span>
+              <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/mysql.svg" alt="SQL" class="tech-logo">
+            </div>
+            <div class="tech-item" style="--i: 7;">
+              <span class="tech-name neon-text">Docker</span>
+              <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/docker.svg" alt="Docker" class="tech-logo">
+            </div>
+            <div class="tech-item" style="--i: 8;">
+              <span class="tech-name neon-text">Git</span>
+              <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/git.svg" alt="Git" class="tech-logo">
+            </div>
+            <div class="tech-item" style="--i: 9;">
+              <span class="tech-name neon-text">GitHub</span>
+              <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/github.svg" alt="GitHub" class="tech-logo">
+            </div>
+            <div class="tech-item" style="--i: 10;">
+              <span class="tech-name neon-text">Odoo</span>
+              <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/odoo.svg" alt="Odoo" class="tech-logo">
+            </div>
+            <div class="tech-item" style="--i: 11;">
+              <span class="tech-name neon-text">Kali Linux</span>
+              <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/kalilinux.svg" alt="Kali Linux" class="tech-logo">
+            </div>
+            <div class="tech-item" style="--i: 12;">
+              <span class="tech-name neon-text">Aiogram</span>
+              <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/telegram.svg" alt="Aiogram" class="tech-logo">
+            </div>
+            <div class="tech-item" style="--i: 13;">
+              <span class="tech-name neon-text">CI/CD</span>
+              <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/gitlab.svg" alt="CI/CD" class="tech-logo">
+            </div>
+            <div class="tech-item" style="--i: 14;">
+              <span class="tech-name neon-text">Kubernetes</span>
+              <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/kubernetes.svg" alt="Kubernetes" class="tech-logo">
+            </div>
+            <div class="tech-item" style="--i: 15;">
+              <span class="tech-name neon-text">Celery</span>
+              <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/celery.svg" alt="Celery" class="tech-logo">
+            </div>
+            <div class="tech-item" style="--i: 16;">
+              <span class="tech-name neon-text">RabbitMQ</span>
+              <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/rabbitmq.svg" alt="RabbitMQ" class="tech-logo">
+            </div>
+            <div class="tech-item" style="--i: 17;">
+              <span class="tech-name neon-text">Redis</span>
+              <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/redis.svg" alt="Redis" class="tech-logo">
+            </div>
+            <div class="tech-item" style="--i: 18;">
+              <span class="tech-name neon-text">Linux</span>
+              <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/linux.svg" alt="Linux" class="tech-logo">
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
 <style>
+  /* Yulduzli fon effekti */
   .stars-background {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, rgba(0, 173, 181, 0.1), transparent);
-    animation: slide 20s infinite linear;
+    background: linear-gradient(180deg, #121212, #1c2526);
+    overflow: hidden;
+    z-index: -1;
   }
-  @keyframes slide {
-    0% { background-position: 0 0; }
-    100% { background-position: 1000px 0; }
+
+  .stars-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    pointer-events: none;
   }
+
+  .layer1 {
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1000"><circle cx="2" cy="2" r="1" fill="white" opacity="0.8"/></svg>') repeat;
+    animation: moveStars 100s linear infinite;
+    opacity: 0.5;
+  }
+
+  .layer2 {
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500"><circle cx="2" cy="2" r="1.5" fill="white" opacity="0.6"/></svg>') repeat;
+    animation: moveStars 150s linear infinite;
+    opacity: 0.3;
+  }
+
+  .layer3 {
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="250" height="250"><circle cx="2" cy="2" r="2" fill="white" opacity="0.4"/></svg>') repeat;
+    animation: moveStars 200s linear infinite;
+    opacity: 0.2;
+  }
+
+  @keyframes moveStars {
+    from { background-position: 0 0; }
+    to { background-position: 1000px 1000px; }
+  }
+
+  /* Neon Text */
   .neon-text {
     background: linear-gradient(90deg, #00adb5, #ffffff);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 10px rgba(0, 173, 181, 0.5);
   }
+
+  /* Profil rasm */
   .profile-image-wrapper {
     position: relative;
-    width: 250px;
-    height: 250px;
+    width: 200px;
+    height: 200px;
     margin: 0 auto;
   }
+
   .profile-image {
     width: 100%;
     height: 100%;
@@ -85,41 +193,165 @@
     box-shadow: 0 0 20px rgba(0, 173, 181, 0.5);
     transition: transform 0.3s ease;
   }
-  .profile-image:hover {
+
+  .tilt-effect {
+    transition: transform 0.3s ease;
+  }
+
+  .tilt-effect:hover {
     transform: scale(1.05);
   }
-  .tech-stack {
-    max-width: 900px;
-    margin: 0 auto;
-  }
-  .tech-badge {
-    background-color: rgba(0, 173, 181, 0.2);
-    color: #00adb5;
-    padding: 10px 20px;
-    border-radius: 25px;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
-  }
-  .tech-badge:hover {
-    background-color: #00adb5;
-    color: #121212;
-    transform: translateY(-3px);
-  }
+
+  /* Ijtimoiy tarmoq tugmalari */
   .social-links .btn {
     font-family: 'Orbitron', sans-serif;
   }
+
+  .neon-btn-outline {
+    border: 2px solid #00adb5;
+    color: #00adb5;
+    padding: 10px 20px;
+    border-radius: 25px;
+    transition: all 0.3s;
+  }
+
+  .neon-btn-outline:hover {
+    background-color: #00adb5;
+    color: #121212;
+    box-shadow: 0 0 20px rgba(0, 173, 181, 0.8);
+    transform: translateY(-2px);
+  }
+
   .pulse:hover {
     animation: pulse 1s infinite;
   }
+
   @keyframes pulse {
     0% { transform: scale(1); }
     50% { transform: scale(1.05); }
     100% { transform: scale(1); }
   }
-  .btn-outline-light:hover {
-    background-color: #00adb5;
-    color: #121212;
-    box-shadow: 0 0 15px rgba(0, 173, 181, 0.6);
+
+  /* Texnologiyalar bo‘limi */
+  .tech-orbit-section {
+    position: relative;
+  }
+
+  .tech-orbit-container {
+    position: relative;
+    width: 600px;
+    height: 600px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    perspective: 1200px;
+  }
+
+  .tech-orbit {
+    position: relative;
+    width: 500px;
+    height: 500px;
+    transform-style: preserve-3d;
+    animation: rotateOrbit 30s linear infinite;
+  }
+
+  .tech-item {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    text-align: center;
+    transform: rotateY(calc(var(--i) * 20deg)) translateZ(350px);
+    transition: all 0.3s ease;
+  }
+
+  .tech-name {
+    display: block;
+    font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
+    margin-bottom: 10px;
+  }
+
+  .tech-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 15px rgba(0, 173, 181, 0.5));
+    transition: transform 0.3s ease;
+  }
+
+  .tech-item:hover .tech-logo {
+    transform: scale(1.2);
+  }
+
+  @keyframes rotateOrbit {
+    from { transform: rotateY(0deg); }
+    to { transform: rotateY(360deg); }
+  }
+
+  /* Responsive Design */
+  @media (max-width: 992px) {
+    .tech-orbit-section {
+      margin-top: 50px;
+      text-align: center;
+    }
+    .tech-orbit-container {
+      width: 500px;
+      height: 500px;
+      margin: 0 auto;
+    }
+    .tech-orbit {
+      width: 400px;
+      height: 400px;
+    }
+    .tech-item {
+      width: 100px;
+      height: 100px;
+      transform: rotateY(calc(var(--i) * 20deg)) translateZ(250px);
+    }
+    .tech-name {
+      font-size: 0.9rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .tech-orbit-container {
+      width: 400px;
+      height: 400px;
+    }
+    .tech-orbit {
+      width: 300px;
+      height: 300px;
+    }
+    .tech-item {
+      width: 80px;
+      height: 80px;
+      transform: rotateY(calc(var(--i) * 20deg)) translateZ(200px);
+    }
+    .tech-name {
+      font-size: 0.8rem;
+      margin-bottom: 5px;
+    }
+    .profile-image-wrapper {
+      width: 150px;
+      height: 150px;
+    }
   }
 </style>
+
+<script>
+  // 3D Tilt effekti uchun JavaScript
+  const tiltEffect = document.querySelector('.tilt-effect');
+  tiltEffect.addEventListener('mousemove', (e) => {
+    const rect = tiltEffect.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    const tiltX = (y / rect.height) * 20;
+    const tiltY = -(x / rect.width) * 20;
+    tiltEffect.style.transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(1.05)`;
+  });
+
+  tiltEffect.addEventListener('mouseleave', () => {
+    tiltEffect.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)';
+  });
+</script>
 {% endblock %}
