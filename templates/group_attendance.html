@@ -2,21 +2,22 @@
 {% block title %}{{ group.name }} - Davomat{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <h1 class="display-4 fw-bold mb-5 text-center neon-text" style="font-family: 'Orbitron', sans-serif;">
+<div class="container-fluid py-5">
+    <h1 class="display-4 fw-bold mb-5 text-center neon-text" style="font-family: 'Orbitron', sans-serif;" data-aos="fade-down">
         {{ group.name }} - Davomat
     </h1>
     <form method="POST" action="{% url 'update_attendance' group.id %}">
         {% csrf_token %}
-        <div class="table-responsive">
-            <table class="table table-dark table-bordered">
+        <div class="table-wrapper" data-aos="fade-up">
+            <table class="creative-table">
                 <thead>
                     <tr>
-                        <th rowspan="2">O‘quvchining F.I.O</th>
+                        <th rowspan="2" class="fixed-column">O‘quvchining F.I.O</th>
                         {% for lesson in lessons %}
-                        <th colspan="2">{{ lesson }}-dars</th>
+                        <th colspan="2" class="gradient-header">{{ lesson }}-dars</th>
                         {% endfor %}
-                        <th rowspan="2">Umumiy Ball</th>
+                        <th rowspan="2" class="gradient-header">To‘lov</th>
+                        <th rowspan="2" class="gradient-header">Umumiy Ball</th>
                     </tr>
                     <tr>
                         {% for lesson in lessons %}
@@ -27,56 +28,261 @@
                 </thead>
                 <tbody>
                     {% for row in attendance_data %}
-                    <tr>
-                        <td>{{ row.student.first_name }} {{ row.student.last_name }}</td>
+                    <tr class="table-row">
+                        <td class="fixed-column">{{ row.student.first_name }} {{ row.student.last_name }}</td>
                         {% for attendance in row.attendances %}
-                        <td style="background-color: {% if attendance and attendance.task_completed %}#007bff{% else %}#6c757d{% endif %}">
-                            <input type="checkbox" name="task_{{ row.student.id }}_{{ forloop.counter }}"
-                                   {% if attendance and attendance.task_completed %}checked{% endif %}>
+                        <td>
+                            <label class="switch">
+                                <input type="checkbox" name="task_{{ row.student.id }}_{{ forloop.counter }}"
+                                       {% if attendance and attendance.task_completed %}checked{% endif %}
+                                       {% if not user.is_authenticated or not user.is_superuser and not user.is_staff %}disabled{% endif %}>
+                                <span class="slider round task-slider"></span>
+                            </label>
                         </td>
-                        <td style="background-color: {% if attendance and attendance.is_present %}#28a745{% else %}#6c757d{% endif %}">
-                            <input type="checkbox" name="present_{{ row.student.id }}_{{ forloop.counter }}"
-                                   {% if attendance and attendance.is_present %}checked{% endif %}>
+                        <td>
+                            <label class="switch">
+                                <input type="checkbox" name="present_{{ row.student.id }}_{{ forloop.counter }}"
+                                       {% if attendance and attendance.is_present %}checked{% endif %}
+                                       {% if not user.is_authenticated or not user.is_superuser and not user.is_staff %}disabled{% endif %}>
+                                <span class="slider round present-slider"></span>
+                            </label>
                         </td>
                         {% endfor %}
-                        <td>{{ row.score }}</td>
+                        <td>
+                            <label class="switch">
+                                <input type="checkbox" name="payment_{{ row.student.id }}"
+                                       {% if row.payment %}checked{% endif %}
+                                       {% if not user.is_authenticated or not user.is_superuser and not user.is_staff %}disabled{% endif %}>
+                                <span class="slider round payment-slider"></span>
+                            </label>
+                        </td>
+                        <td class="score-cell">{{ row.score }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
-        {% if request.user.is_superuser %}
-        <div class="text-center mt-4">
-            <button type="submit" class="btn btn-primary">Saqlash</button>
-            <a href="{% url 'group_list' %}" class="btn btn-outline-light" style="border-color: #00adb5; color: #00adb5;">
-                Orqaga
-            </a>
+        <div class="text-center mt-4" data-aos="zoom-in">
+            {% if user.is_authenticated and user.is_superuser or user.is_staff %}
+            <button type="submit" class="btn btn-primary neon-btn">Saqlash</button>
+            <a href="{% url 'group_list' %}" class="btn btn-outline-light neon-btn-outline">Orqaga</a>
+            {% else %}
+            <a href="{% url 'group_list' %}" class="btn btn-outline-light neon-btn-outline">Orqaga</a>
+            {% endif %}
         </div>
-        {% endif %}
     </form>
 </div>
 
 <style>
+    /* Neon Text */
     .neon-text {
         background: linear-gradient(90deg, #00adb5, #ffffff);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
+        text-shadow: 0 0 10px rgba(0, 173, 181, 0.5);
     }
-    .table th, .table td {
+
+    /* Table Wrapper */
+    .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Creative Table */
+    .creative-table {
+        width: 100%;
+        background-color: #1c2526;
+        border-collapse: separate;
+        border-spacing: 0;
+        box-shadow: 0 8px 20px rgba(0, 173, 181, 0.3);
+        border-radius: 15px;
+        overflow: hidden;
+        table-layout: auto;
+    }
+
+    .creative-table th, .creative-table td {
         text-align: center;
         vertical-align: middle;
+        padding: 10px;
+        font-family: 'Poppins', sans-serif;
+        border: 1px solid rgba(0, 173, 181, 0.2);
+        min-width: 60px; /* Har bir ustun uchun minimal kenglik */
     }
-    .table th {
-        background-color: #1a1a1a;
+
+    /* Fixed Column for Student Names */
+    .fixed-column {
+        position: sticky;
+        left: 0;
+        background-color: #1c2526;
+        z-index: 1;
+        min-width: 200px; /* O‘quvchilar ismi uchun kengroq joy */
+        box-shadow: 3px 0 5px rgba(0, 173, 181, 0.1);
     }
-    .btn-outline-light:hover, .btn-primary:hover {
-        background-color: #00adb5;
-        color: #121212;
+
+    /* Gradient Header */
+    .gradient-header {
+        background: linear-gradient(45deg, #00adb5, #1c2526);
+        color: #ffffff;
+        font-weight: 600;
+        text-transform: uppercase;
+        transition: all 0.3s;
     }
-    .btn-primary {
-        background-color: #00adb5;
+
+    .gradient-header:hover {
+        background: linear-gradient(45deg, #1c2526, #00adb5);
+        text-shadow: 0 0 8px rgba(0, 173, 181, 0.8);
+    }
+
+    /* Table Row Hover */
+    .table-row {
+        transition: all 0.3s;
+    }
+
+    .table-row:hover {
+        background-color: rgba(0, 173, 181, 0.1);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 173, 181, 0.2);
+    }
+
+    /* Toggle Switch */
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 40px;
+        height: 20px;
+    }
+
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #6c757d;
+        transition: 0.4s;
+        border-radius: 20px;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 16px;
+        width: 16px;
+        left: 2px;
+        bottom: 2px;
+        background-color: #ffffff;
+        transition: 0.4s;
+        border-radius: 50%;
+    }
+
+    input:checked + .task-slider {
+        background: linear-gradient(45deg, #007bff, #00adb5);
+    }
+
+    input:checked + .present-slider {
+        background: linear-gradient(45deg, #28a745, #00adb5);
+    }
+
+    input:checked + .payment-slider {
+        background: linear-gradient(45deg, #28a745, #00adb5);
+    }
+
+    input:checked + .slider:before {
+        transform: translateX(20px);
+        box-shadow: 0 0 5px rgba(0, 173, 181, 0.5);
+    }
+
+    .slider.round {
+        border-radius: 20px;
+    }
+
+    .slider.round:before {
+        border-radius: 50%;
+    }
+
+    /* Score Cell */
+    .score-cell {
+        font-weight: 600;
+        color: #00adb5;
+        text-shadow: 0 0 5px rgba(0, 173, 181, 0.3);
+        min-width: 100px;
+    }
+
+    /* Neon Buttons */
+    .neon-btn {
+        background: linear-gradient(45deg, #00adb5, #1c2526);
         border: none;
+        color: #ffffff;
+        font-family: 'Orbitron', sans-serif;
+        padding: 10px 30px;
+        border-radius: 25px;
+        transition: all 0.3s;
+        box-shadow: 0 0 10px rgba(0, 173, 181, 0.5);
+    }
+
+    .neon-btn:hover {
+        background: linear-gradient(45deg, #1c2526, #00adb5);
+        color: #ffffff;
+        box-shadow: 0 0 20px rgba(0, 173, 181, 0.8);
+        transform: translateY(-2px);
+    }
+
+    .neon-btn-outline {
+        border: 2px solid #00adb5;
+        color: #00adb5;
+        font-family: 'Orbitron', sans-serif;
+        padding: 10px 30px;
+        border-radius: 25px;
+        transition: all 0.3s;
+    }
+
+    .neon-btn-outline:hover {
+        background-color: #00adb5;
         color: #121212;
+        box-shadow: 0 0 20px rgba(0, 173, 181, 0.8);
+        transform: translateY(-2px);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1200px) {
+        .table-wrapper {
+            overflow-x: auto;
+        }
+        .creative-table th, .creative-table td {
+            min-width: 50px;
+        }
+        .fixed-column {
+            min-width: 150px;
+        }
+        .score-cell {
+            min-width: 80px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .creative-table th, .creative-table td {
+            padding: 8px;
+            font-size: 14px;
+        }
+        .switch {
+            width: 30px;
+            height: 15px;
+        }
+        .slider:before {
+            height: 11px;
+            width: 11px;
+        }
+        input:checked + .slider:before {
+            transform: translateX(15px);
+        }
     }
 </style>
 {% endblock %}

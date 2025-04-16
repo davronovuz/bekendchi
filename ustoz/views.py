@@ -8,7 +8,6 @@ def group_list(request):
     return render(request, 'group_list.html', {'groups': groups})
 
 
-
 def group_attendance(request, group_id):
     group = get_object_or_404(Group, id=group_id)
     students = group.students.all()
@@ -20,18 +19,18 @@ def group_attendance(request, group_id):
         attendance_dict = {attendance.lesson_number: attendance for attendance in attendances}
         row = {
             'student': student,
-            'attendances': [attendance_dict.get(i, None) for i in range(1, 13)],  # 1-dan 12-darsgacha
-            'score': student.calculate_score()
+            'attendances': [attendance_dict.get(i, None) for i in range(1, 13)],
+            'score': student.calculate_score(),
+            'payment': student.payment  # To‘lov holatini uzatamiz
         }
         attendance_data.append(row)
 
-    # Darslar ro‘yxatini template uchun tayyorlash
     lessons = list(range(1, 13))  # 1-dan 12-gacha bo‘lgan darslar ro‘yxati
 
     return render(request, 'group_attendance.html', {
         'group': group,
         'attendance_data': attendance_data,
-        'lessons': lessons  # Darslar ro‘yxatini template’ga uzatamiz
+        'lessons': lessons
     })
 
 
@@ -57,5 +56,12 @@ def update_attendance(request, group_id):
                         'task_completed': task_completed
                     }
                 )
+
+            # To‘lov holatini yangilash
+            payment_key = f"payment_{student.id}"
+            payment = request.POST.get(payment_key) == 'on'
+            student.payment = payment
+            student.save()
+
         return redirect('group_attendance', group_id=group.id)
     return redirect('group_attendance', group_id=group_id)
