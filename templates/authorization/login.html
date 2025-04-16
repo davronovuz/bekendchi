@@ -2,16 +2,23 @@
 {% block title %}Kirish{% endblock %}
 
 {% block content %}
-<div class="container mt-5 mb-5">
+<div class="container-fluid py-5 position-relative min-vh-100">
+  <!-- Yulduzli fon effekti -->
+  <div class="stars-background">
+    <div class="stars-layer layer1"></div>
+    <div class="stars-layer layer2"></div>
+    <div class="stars-layer layer3"></div>
+  </div>
+
   <div class="row justify-content-center">
     <div class="col-md-6 col-lg-5">
-      <div class="card bg-dark text-white shadow-lg border-0 rounded-4" style="border: 2px solid #00adb5;">
+      <div class="card shadow-lg border-0 rounded-4" style="background: linear-gradient(145deg, rgba(28, 37, 38, 0.9), rgba(18, 18, 18, 0.9)); border: 2px solid #00adb5;" data-aos="fade-up">
         <div class="card-body p-5">
-          <h2 class="text-center mb-4 fw-bold" style="color: #00adb5;">Kirish</h2>
-          <p class="text-center text-muted mb-4">Akkauntingizga kiring va loyihalarni kashf qiling!</p>
+          <h2 class="text-center mb-4 fw-bold neon-text" style="font-family: 'Orbitron', sans-serif;">Kirish</h2>
+
 
           {% if form.errors %}
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" style="background: rgba(255, 99, 71, 0.2); border: 1px solid #ff6347; color: #ff6347;">
               Noto‘g‘ri foydalanuvchi nomi yoki parol.
               <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
@@ -19,19 +26,23 @@
 
           <form method="post">
             {% csrf_token %}
-            <div class="mb-3">
-              <label for="username" class="form-label">Foydalanuvchi nomi yoki Email</label>
-              <input type="text" name="username" id="username" class="form-control bg-dark text-white border-0 shadow-sm" placeholder="Foydalanuvchi nomi yoki email" required>
+            <div class="mb-4">
+              <label for="username" class="form-label neon-text" style="font-family: 'Poppins', sans-serif;">Foydalanuvchi nomi yoki Email</label>
+              <input type="text" name="username" id="username" class="form-control neon-input" placeholder="Foydalanuvchi nomi yoki email" required style="background: rgba(28, 37, 38, 0.8); color: #ffffff; border: 2px solid #00adb5; font-family: 'Poppins', sans-serif;">
             </div>
-            <div class="mb-3">
-              <label for="password" class="form-label">Parol</label>
-              <input type="password" name="password" id="password" class="form-control bg-dark text-white border-0 shadow-sm" placeholder="Parolingizni kiriting" required>
+            <div class="mb-4">
+              <label for="password" class="form-label neon-text" style="font-family: 'Poppins', sans-serif;">Parol</label>
+              <input type="password" name="password" id="password" class="form-control neon-input" placeholder="Parolingizni kiriting" required style="background: rgba(28, 37, 38, 0.8); color: #ffffff; border: 2px solid #00adb5; font-family: 'Poppins', sans-serif;">
             </div>
-            <button type="submit" class="btn btn-outline-light w-100 mt-3 py-2" style="border-color: #00adb5; color: #00adb5;">Kirish</button>
+            <button type="submit" class="btn w-100 mt-3 py-2 neon-btn-outline pulse" style="font-family: 'Orbitron', sans-serif;">Kirish</button>
           </form>
 
-          <p class="text-center mt-4 text-muted">Akkauntingiz yo‘qmi? <a href="{% url 'sn' %}" class="text-primary">Ro‘yxatdan o‘tish</a></p>
-          <p class="text-center text-muted"><a href="#" class="text-primary">Parolni unutdingizmi?</a></p>
+          <p class="text-center mt-4" style="color: #ffffff; font-family: 'Poppins', sans-serif;">
+            Akkauntingiz yo‘qmi? <a href="{% url 'sn' %}" class="neon-link">Ro‘yxatdan o‘tish</a>
+          </p>
+          <p class="text-center" style="color: #ffffff; font-family: 'Poppins', sans-serif;">
+            <a href="#" class="neon-link">Parolni unutdingizmi?</a>
+          </p>
         </div>
       </div>
     </div>
@@ -39,18 +50,126 @@
 </div>
 
 <style>
+  /* Yulduzli fon effekti */
+  .stars-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, #121212, #1c2526);
+    overflow: hidden;
+    z-index: -1;
+  }
+
+  .stars-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    pointer-events: none;
+  }
+
+  .layer1 {
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1000"><circle cx="2" cy="2" r="1" fill="white" opacity="0.8"/></svg>') repeat;
+    animation: moveStars 100s linear infinite;
+    opacity: 0.5;
+  }
+
+  .layer2 {
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500"><circle cx="2" cy="2" r="1.5" fill="white" opacity="0.6"/></svg>') repeat;
+    animation: moveStars 150s linear infinite;
+    opacity: 0.3;
+  }
+
+  .layer3 {
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="250" height="250"><circle cx="2" cy="2" r="2" fill="white" opacity="0.4"/></svg>') repeat;
+    animation: moveStars 200s linear infinite;
+    opacity: 0.2;
+  }
+
+  @keyframes moveStars {
+    from { background-position: 0 0; }
+    to { background-position: 1000px 1000px; }
+  }
+
+  /* Neon Text */
+  .neon-text {
+    background: linear-gradient(90deg, #00adb5, #ffffff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 10px rgba(0, 173, 181, 0.5);
+  }
+
+  /* Neon Input */
+  .neon-input {
+    transition: all 0.3s ease;
+  }
+
+  .neon-input:focus {
+    border-color: #00adb5 !important;
+    box-shadow: 0 0 10px rgba(0, 173, 181, 0.8) !important;
+    transform: scale(1.02);
+  }
+
+  .neon-input:hover {
+    box-shadow: 0 0 8px rgba(0, 173, 181, 0.5);
+  }
+
+  /* Neon Button */
+  .neon-btn-outline {
+    border: 2px solid #00adb5;
+    color: #00adb5;
+    padding: 10px 20px;
+    border-radius: 25px;
+    transition: all 0.3s;
+  }
+
+  .neon-btn-outline:hover {
+    background-color: #00adb5;
+    color: #121212;
+    box-shadow: 0 0 20px rgba(0, 173, 181, 0.8);
+    transform: translateY(-2px);
+  }
+
+  .pulse:hover {
+    animation: pulse 1s infinite;
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+
+  /* Neon Link */
+  .neon-link {
+    color: #00adb5;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .neon-link:hover {
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(0, 173, 181, 0.8);
+  }
+
+  /* Card Hover Effect */
   .card:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 20px rgba(0, 173, 181, 0.3) !important;
   }
-  .form-control:focus {
-    border-color: #00adb5;
-    box-shadow: 0 0 5px rgba(0, 173, 181, 0.5);
-  }
-  .btn-outline-light:hover {
-    background-color: #00adb5;
-    color: #fff;
-    border-color: #00adb5;
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .card {
+      padding: 1rem;
+    }
+    .card-body {
+      padding: 2rem !important;
+    }
   }
 </style>
 {% endblock %}

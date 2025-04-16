@@ -2,19 +2,26 @@
 {% block title %}Chiqish{% endblock %}
 
 {% block content %}
-<div class="container mt-5 mb-5">
+<div class="container-fluid py-5 position-relative min-vh-100">
+  <!-- Yulduzli fon effekti -->
+  <div class="stars-background">
+    <div class="stars-layer layer1"></div>
+    <div class="stars-layer layer2"></div>
+    <div class="stars-layer layer3"></div>
+  </div>
+
   <div class="row justify-content-center">
     <div class="col-md-6 col-lg-5">
-      <div class="card bg-dark text-white shadow-lg border-0 rounded-4 text-center" style="border: 2px solid #00adb5;" data-aos="zoom-in">
+      <div class="card shadow-lg border-0 rounded-4 text-center" style="background: linear-gradient(145deg, rgba(28, 37, 38, 0.9), rgba(18, 18, 18, 0.9)); border: 2px solid #00adb5;" data-aos="zoom-in">
         <div class="card-body p-5">
           <div class="mb-4">
-            <i class="bi bi-box-arrow-right display-3" style="color: #00adb5;"></i>
+            <i class="bi bi-box-arrow-right display-3 neon-text" style="text-shadow: 0 0 10px rgba(0, 173, 181, 0.5);"></i>
           </div>
-          <h2 class="fw-bold mb-4" style="color: #00adb5;">Tizimdan chiqdingiz!</h2>
-          <p class="text-muted mb-4">ShuLoyiha'dan foydalanganingiz uchun rahmat! Bizni sog‘inasiz deb umid qilamiz.</p>
+          <h2 class="fw-bold mb-4 neon-text" style="font-family: 'Orbitron', sans-serif;">Tizimdan chiqdingiz!</h2>
+          <p class="mb-4" style="color: #ffffff; font-family: 'Poppins', sans-serif;">Biz sizni sog‘inamiz</p>
           <div class="d-flex justify-content-center gap-3">
-            <a href="{% url 'ln' %}" class="btn btn-outline-light py-2 px-4" style="border-color: #00adb5; color: #00adb5;">Qayta kirish</a>
-            <a href="{% url 'home' %}" class="btn btn-outline-secondary py-2 px-4">Bosh sahifa</a>
+            <a href="{% url 'ln' %}" class="btn py-2 px-4 neon-btn-outline pulse" style="font-family: 'Orbitron', sans-serif;">Qayta kirish</a>
+            <a href="{% url 'home' %}" class="btn py-2 px-4 neon-btn-secondary" style="font-family: 'Orbitron', sans-serif;">Bosh sahifa</a>
           </div>
         </div>
       </div>
@@ -23,18 +30,115 @@
 </div>
 
 <style>
+  /* Yulduzli fon effekti */
+  .stars-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, #121212, #1c2526);
+    overflow: hidden;
+    z-index: -1;
+  }
+
+  .stars-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    pointer-events: none;
+  }
+
+  .layer1 {
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1000"><circle cx="2" cy="2" r="1" fill="white" opacity="0.8"/></svg>') repeat;
+    animation: moveStars 100s linear infinite;
+    opacity: 0.5;
+  }
+
+  .layer2 {
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500"><circle cx="2" cy="2" r="1.5" fill="white" opacity="0.6"/></svg>') repeat;
+    animation: moveStars 150s linear infinite;
+    opacity: 0.3;
+  }
+
+  .layer3 {
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="250" height="250"><circle cx="2" cy="2" r="2" fill="white" opacity="0.4"/></svg>') repeat;
+    animation: moveStars 200s linear infinite;
+    opacity: 0.2;
+  }
+
+  @keyframes moveStars {
+    from { background-position: 0 0; }
+    to { background-position: 1000px 1000px; }
+  }
+
+  /* Neon Text */
+  .neon-text {
+    background: linear-gradient(90deg, #00adb5, #ffffff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 10px rgba(0, 173, 181, 0.5);
+  }
+
+  /* Neon Button (Qayta kirish) */
+  .neon-btn-outline {
+    border: 2px solid #00adb5;
+    color: #00adb5;
+    padding: 10px 20px;
+    border-radius: 25px;
+    transition: all 0.3s;
+  }
+
+  .neon-btn-outline:hover {
+    background-color: #00adb5;
+    color: #121212;
+    box-shadow: 0 0 20px rgba(0, 173, 181, 0.8);
+    transform: translateY(-2px);
+  }
+
+  /* Neon Button (Bosh sahifa) */
+  .neon-btn-secondary {
+    border: 2px solid #333;
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 25px;
+    transition: all 0.3s;
+  }
+
+  .neon-btn-secondary:hover {
+    background-color: #333;
+    color: #00adb5;
+    box-shadow: 0 0 20px rgba(0, 173, 181, 0.5);
+    transform: translateY(-2px);
+  }
+
+  .pulse:hover {
+    animation: pulse 1s infinite;
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+
+  /* Card Hover Effect */
   .card:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 25px rgba(0, 173, 181, 0.4) !important;
   }
-  .btn-outline-light:hover {
-    background-color: #00adb5;
-    color: #fff;
-    border-color: #00adb5;
-  }
-  .btn-outline-secondary:hover {
-    background-color: #333;
-    color: #00adb5;
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .card {
+      padding: 1rem;
+    }
+    .card-body {
+      padding: 2rem !important;
+    }
   }
 </style>
 
