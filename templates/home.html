@@ -3,14 +3,10 @@
 
 {% block content %}
 <!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Pacifico&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
-  body {
-    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-    color: #fff;
-    font-family: 'Orbitron', sans-serif;
-  }
+  /* Hero Section */
   .hero {
     height: 100vh;
     display: flex;
@@ -19,21 +15,188 @@
     align-items: center;
     text-align: center;
     padding: 2rem;
+    position: relative;
+    z-index: 1;
   }
   .hero h1 {
-    font-size: 3rem;
+    font-size: 3.5rem;
     font-weight: bold;
     margin-bottom: 1rem;
+    font-family: 'Orbitron', sans-serif;
+    background: linear-gradient(90deg, #00adb5, #ffffff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 10px rgba(0, 173, 181, 0.5);
   }
   .hero p {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     font-family: 'Pacifico', cursive;
+    color: #ffffff;
+    text-shadow: 0 0 8px rgba(0, 173, 181, 0.3);
+  }
+
+  /* Technology Orbit Animation */
+  .tech-orbit-section {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .tech-orbit-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .tech-orbit {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    animation: rotateOrbit 60s linear infinite;
+  }
+  @keyframes rotateOrbit {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  .tech-item {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    text-align: center;
+    pointer-events: auto;
+    transform-origin: center center;
+    transform: rotate(calc(var(--i) * 20deg)) translate(40vw, 0);
+  }
+  .tech-logo {
+    width: 50px;
+    height: 50px;
+    filter: drop-shadow(0 0 5px rgba(0, 173, 181, 0.5));
+    transition: all 0.3s ease;
+  }
+  .tech-name {
+    position: absolute;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.9rem;
+    font-family: 'Poppins', sans-serif;
+    color: #00adb5;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .tech-item:hover .tech-logo {
+    transform: scale(1.2);
+    filter: drop-shadow(0 0 15px rgba(0, 173, 181, 0.8));
+  }
+  .tech-item:hover .tech-name {
+    opacity: 1;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .hero h1 {
+      font-size: 2.5rem;
+    }
+    .hero p {
+      font-size: 1.3rem;
+    }
+    .tech-item {
+      width: 60px;
+      height: 60px;
+      transform: rotate(calc(var(--i) * 20deg)) translate(70vw, 0);
+    }
+    .tech-logo {
+      width: 40px;
+      height: 40px;
+    }
+    .tech-name {
+      font-size: 0.7rem;
+      top: 50px;
+    }
   }
 </style>
 
 <div class="hero">
-  <h1 id="banner-title">Salom, Dasturchi!</h1>
-  <p id="banner-text">Kod bu – zamonaviy she’riyat.</p>
+  <h1 id="banner-title" data-aos="fade-up">Salom, Dasturchi!</h1>
+  <p id="banner-text" data-aos="fade-up" data-aos-delay="200">Kod bu – zamonaviy she’riyat.</p>
+</div>
+
+<!-- Technology Orbit Section -->
+<div class="tech-orbit-section">
+  <div class="tech-orbit-container">
+    <div class="tech-orbit">
+      <div class="tech-item" style="--i: 1;">
+        <span class="tech-name">Python</span>
+        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/python.svg" alt="Python" class="tech-logo">
+      </div>
+      <div class="tech-item" style="--i: 2;">
+        <span class="tech-name">Django</span>
+        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/django.svg" alt="Django" class="tech-logo">
+      </div>
+      <div class="tech-item" style="--i: 4;">
+        <span class="tech-name">FastAPI</span>
+        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/fastapi.svg" alt="FastAPI" class="tech-logo">
+      </div>
+      <div class="tech-item" style="--i: 5;">
+        <span class="tech-name">PostgreSQL</span>
+        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/postgresql.svg" alt="PostgreSQL" class="tech-logo">
+      </div>
+      <div class="tech-item" style="--i: 6;">
+        <span class="tech-name">SQL</span>
+        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/mysql.svg" alt="SQL" class="tech-logo">
+      </div>
+      <div class="tech-item" style="--i: 7;">
+        <span class="tech-name">Docker</span>
+        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/docker.svg" alt="Docker" class="tech-logo">
+      </div>
+      <div class="tech-item" style="--i: 8;">
+        <span class="tech-name">Git</span>
+        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/git.svg" alt="Git" class="tech-logo">
+      </div>
+      <div class="tech-item" style="--i: 9;">
+        <span class="tech-name">GitHub</span>
+        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/github.svg" alt="GitHub" class="tech-logo">
+      </div>
+      <div class="tech-item" style="--i: 11;">
+        <span class="tech-name">Kali Linux</span>
+        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/kalilinux.svg" alt="Kali Linux" class="tech-logo">
+      </div>
+      <div class="tech-item" style="--i: 12;">
+        <span class="tech-name">Aiogram</span>
+        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/telegram.svg" alt="Aiogram" class="tech-logo">
+      </div>
+      <div class="tech-item" style="--i: 13;">
+        <span class="tech-name">CI/CD</span>
+        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/gitlab.svg" alt="CI/CD" class="tech-logo">
+      </div>
+      <div class="tech-item" style="--i: 14;">
+        <span class="tech-name">Kubernetes</span>
+        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/kubernetes.svg" alt="Kubernetes" class="tech-logo">
+      </div>
+      <div class="tech-item" style="--i: 15;">
+        <span class="tech-name">Celery</span>
+        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/celery.svg" alt="Celery" class="tech-logo">
+      </div>
+      <div class="tech-item" style="--i: 16;">
+        <span class="tech-name">RabbitMQ</span>
+        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/rabbitmq.svg" alt="RabbitMQ" class="tech-logo">
+      </div>
+      <div class="tech-item" style="--i: 17;">
+        <span class="tech-name">Redis</span>
+        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/redis.svg" alt="Redis" class="tech-logo">
+      </div>
+      <div class="tech-item" style="--i: 18;">
+        <span class="tech-name">Linux</span>
+        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/linux.svg" alt="Linux" class="tech-logo">
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -42,7 +205,6 @@
     { title: "Kod bu – zamonaviy she’riyat.", text: "Har satr – yangi bir fikr." },
     { title: "Qora fon, oq matn – bu mening sahnam.", text: "Har kod orqasida orzu yotadi." },
     { title: "0 va 1 orasida million imkoniyat yashiringan.", text: "Kod – bu ijodning eng sof ko‘rinishi." },
-
     { title: "Terminal – bu ssenariy yoziladigan sahna.", text: "Buyruqlar – ijodiy gaplar." },
     { title: "Kodlash bu sehr emas, bu tartiblangan g‘oya.", text: "Xar bir funksiya — mo‘jiza." },
     { title: "Kod satrlari – orzularni quradigan g‘ishtlar.", text: "Orzularni bajaramiz, kompilyatsiya qilib." },
@@ -50,6 +212,7 @@
     { title: "Buglar ketadi, ammo tajriba qoladi.", text: "Har xatolik – yangi dars." }
   ];
 
+  // Random Banner
   const randomBanner = banners[Math.floor(Math.random() * banners.length)];
   document.getElementById('banner-title').innerText = randomBanner.title;
   document.getElementById('banner-text').innerText = randomBanner.text;

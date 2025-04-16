@@ -15,25 +15,78 @@
     <!-- Custom CSS -->
     <style>
       body {
-        background-color: #121212;
+        background: linear-gradient(180deg, #121212, #1c2526);
         color: #ffffff;
         font-family: 'Poppins', sans-serif;
+        position: relative;
+        min-height: 100vh;
+        overflow-x: hidden;
       }
+
+      /* Yulduzli fon effekti */
+      body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        background: transparent;
+      }
+      .stars-layer {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: transparent;
+        pointer-events: none;
+        z-index: -1;
+      }
+      .layer1 {
+        background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1000"><circle cx="2" cy="2" r="1" fill="white" opacity="0.8"/></svg>') repeat;
+        animation: moveStars 100s linear infinite;
+        opacity: 0.5;
+      }
+      .layer2 {
+        background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500"><circle cx="2" cy="2" r="1.5" fill="white" opacity="0.6"/></svg>') repeat;
+        animation: moveStars 150s linear infinite;
+        opacity: 0.3;
+      }
+      .layer3 {
+        background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="250" height="250"><circle cx="2" cy="2" r="2" fill="white" opacity="0.4"/></svg>') repeat;
+        animation: moveStars 200s linear infinite;
+        opacity: 0.2;
+      }
+      @keyframes moveStars {
+        from { background-position: 0 0; }
+        to { background-position: 1000px 1000px; }
+      }
+
+      /* Neon Text */
+      .neon-text {
+        background: linear-gradient(90deg, #00adb5, #ffffff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 0 10px rgba(0, 173, 181, 0.5);
+      }
+
+      /* Navbar */
       .navbar {
-        background-color: #1c2526 !important;
+        background: linear-gradient(145deg, rgba(28, 37, 38, 0.9), rgba(18, 18, 18, 0.9)) !important;
         padding: 15px 0;
         box-shadow: 0 4px 12px rgba(0, 173, 181, 0.3);
+        border-bottom: 2px solid #00adb5;
       }
       .navbar-brand {
         font-family: 'Orbitron', sans-serif;
-        color: #00adb5 !important;
         font-size: 2rem;
         font-weight: 700;
         text-transform: uppercase;
-        transition: color 0.3s, transform 0.3s;
+        transition: transform 0.3s;
       }
       .navbar-brand:hover {
-        color: #ffffff !important;
         transform: scale(1.05);
       }
       .nav-link {
@@ -60,9 +113,70 @@
       .nav-link:hover::after {
         width: 100%;
       }
+
+      /* Search Form */
+      .search-form {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+      .search-input {
+        background: rgba(40, 48, 49, 0.8); /* Input fonini biroz ochiqroq qildik */
+        border: 2px solid #00adb5;
+        color: #ffffff;
+        border-radius: 25px;
+        padding: 10px 40px 10px 15px;
+        transition: all 0.3s ease;
+      }
+      .search-input::placeholder {
+        color: #e0e0e0; /* Placeholder matnini oqroq qildik */
+        opacity: 1;
+      }
+      .search-input::-webkit-input-placeholder {
+        color: #e0e0e0;
+      }
+      .search-input::-moz-placeholder {
+        color: #e0e0e0;
+      }
+      .search-input:-ms-input-placeholder {
+        color: #e0e0e0;
+      }
+      .search-input:focus {
+        border-color: #00adb5;
+        box-shadow: 0 0 10px rgba(0, 173, 181, 0.8);
+        transform: scale(1.02);
+      }
+      .search-input:hover {
+        box-shadow: 0 0 8px rgba(0, 173, 181, 0.5);
+      }
+      .search-btn {
+        position: absolute;
+        right: 5px;
+        border: none;
+        background: transparent;
+        color: #00adb5;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+      }
+      .search-btn:hover {
+        color: #ffffff;
+        text-shadow: 0 0 10px rgba(0, 173, 181, 0.8);
+        animation: pulse 1s infinite;
+      }
+      @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+      }
+
+      /* Auth Buttons */
       .btn-auth {
         font-family: 'Orbitron', sans-serif;
-        border-color: #00adb5;
+        border: 2px solid #00adb5;
         color: #00adb5;
         margin-left: 12px;
         padding: 8px 20px;
@@ -72,61 +186,53 @@
       .btn-auth:hover {
         background-color: #00adb5;
         color: #121212;
-        box-shadow: 0 0 15px rgba(0, 173, 181, 0.6);
+        box-shadow: 0 0 15px rgba(0, 173, 181, 0.8);
         transform: translateY(-2px);
       }
-      .btn-search {
-        border-color: #00adb5;
-        color: #00adb5;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .btn-search:hover {
-        background-color: #00adb5;
-        color: #121212;
-      }
-      .form-control {
-        background-color: #2a2a2a;
-        border-color: #00adb5;
-        color: #ffffff;
-        border-radius: 20px;
-        padding: 10px 15px;
-      }
-      .form-control:focus {
-        background-color: #2a2a2a;
-        border-color: #00adb5;
-        box-shadow: 0 0 8px rgba(0, 173, 181, 0.5);
-      }
+
+      /* Footer */
       .footer {
-        background-color: #1c2526;
+        background: linear-gradient(145deg, rgba(28, 37, 38, 0.9), rgba(18, 18, 18, 0.9));
         padding: 40px 0;
         text-align: center;
         border-top: 2px solid #00adb5;
+        position: relative;
+        bottom: 0;
+        width: 100%;
       }
       .footer a {
         font-family: 'Poppins', sans-serif;
         color: #00adb5;
         text-decoration: none;
         margin: 0 15px;
-        transition: color 0.3s;
+        transition: all 0.3s ease;
       }
       .footer a:hover {
         color: #ffffff;
+        text-shadow: 0 0 10px rgba(0, 173, 181, 0.8);
       }
+
+      /* Content */
       .content {
         min-height: calc(100vh - 250px);
       }
+
+      /* Alert */
       .alert {
         border-radius: 10px;
         box-shadow: 0 4px 8px rgba(0, 173, 181, 0.2);
+        background: rgba(255, 99, 71, 0.2);
+        border: 1px solid #ff6347;
+        color: #ff6347;
       }
     </style>
   </head>
   <body>
+    <!-- Yulduzli fon -->
+    <div class="stars-layer layer1"></div>
+    <div class="stars-layer layer2"></div>
+    <div class="stars-layer layer3"></div>
+
     <!-- Messages -->
     <div class="container mt-3">
       {% if messages %}
@@ -142,7 +248,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg" data-aos="fade-down">
       <div class="container-fluid">
-        <a class="navbar-brand" href="/">Bekendchi</a>
+        <a class="navbar-brand neon-text" href="/">Bekendchi</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -164,17 +270,17 @@
             {% endif %}
           </ul>
           <!-- Search Form -->
-          <form class="d-flex me-3" role="search" method="get">
-            <input class="form-control me-2" type="search" name="q" placeholder="Kashf qil..." aria-label="Search">
-            <button class="btn btn-outline-success btn-search" type="submit"><i class="bi bi-search"></i></button>
+          <form class="d-flex me-3 search-form" role="search" method="get">
+            <input class="form-control me-2 search-input" type="search" name="q" placeholder="Kashf qil..." aria-label="Search">
+            <button class="btn search-btn" type="submit"><i class="bi bi-search"></i></button>
           </form>
           <!-- Auth Buttons -->
           <div class="d-flex">
             {% if user.is_authenticated %}
-              <a href="{% url 'lt' %}" class="btn btn-outline-success btn-auth">Chiqish</a>
+              <a href="{% url 'lt' %}" class="btn btn-auth">Chiqish</a>
             {% else %}
-              <a href="{% url 'ln' %}" class="btn btn-outline-success btn-auth">Kirish</a>
-              <a href="{% url 'sn' %}" class="btn btn-outline-success btn-auth">Ro'yhatdan o'tish</a>
+              <a href="{% url 'ln' %}" class="btn btn-auth">Kirish</a>
+              <a href="{% url 'sn' %}" class="btn btn-auth">Ro'yhatdan o'tish</a>
             {% endif %}
           </div>
         </div>
@@ -191,8 +297,8 @@
     <footer class="footer" data-aos="fade-up">
       <div class="container">
         <p>
-          © 2025 <a href="/">Ilhom Galaktikasi</a>. Har bir g‘oya – yangi yulduz! |
-          <a href="#">Portfolio</a> |
+          © 2025 <a href="/">Oddiy Coder</a>. Har bir g‘oya – yangi yulduz! |
+          <a href="{% url 'haqimda' %}">Portfolio</a> |
           <a href="{% url 'blog_list' %}">Fikrlar</a> |
           <a href="{% url 'ln' %}">Kirish</a>
         </p>
