@@ -13,15 +13,15 @@
                 <thead>
                     <tr>
                         <th rowspan="2">O‘quvchining F.I.O</th>
-                        {% for i in "123456789101112" %}
-                        <th colspan="2">{{ i }}-dars</th>
+                        {% for lesson in lessons %}
+                        <th colspan="2">{{ lesson }}-dars</th>
                         {% endfor %}
                         <th rowspan="2">Umumiy Ball</th>
                     </tr>
                     <tr>
-                        {% for i in "123456789101112" %}
-                        <th>Davomat</th>
+                        {% for lesson in lessons %}
                         <th>Vazifa</th>
+                        <th>Davomat</th>
                         {% endfor %}
                     </tr>
                 </thead>
@@ -30,13 +30,13 @@
                     <tr>
                         <td>{{ row.student.first_name }} {{ row.student.last_name }}</td>
                         {% for attendance in row.attendances %}
-                        <td style="background-color: {% if attendance and attendance.is_present %}#28a745{% else %}#6c757d{% endif %}">
-                            <input type="checkbox" name="present_{{ row.student.id }}_{{ forloop.counter }}"
-                                   {% if attendance and attendance.is_present %}checked{% endif %}>
-                        </td>
                         <td style="background-color: {% if attendance and attendance.task_completed %}#007bff{% else %}#6c757d{% endif %}">
                             <input type="checkbox" name="task_{{ row.student.id }}_{{ forloop.counter }}"
                                    {% if attendance and attendance.task_completed %}checked{% endif %}>
+                        </td>
+                        <td style="background-color: {% if attendance and attendance.is_present %}#28a745{% else %}#6c757d{% endif %}">
+                            <input type="checkbox" name="present_{{ row.student.id }}_{{ forloop.counter }}"
+                                   {% if attendance and attendance.is_present %}checked{% endif %}>
                         </td>
                         {% endfor %}
                         <td>{{ row.score }}</td>
