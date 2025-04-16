@@ -45,12 +45,14 @@
                 </tbody>
             </table>
         </div>
+        {% request.user.is_superuser %}
         <div class="text-center mt-4">
             <button type="submit" class="btn btn-primary">Saqlash</button>
             <a href="{% url 'group_list' %}" class="btn btn-outline-light" style="border-color: #00adb5; color: #00adb5;">
                 Orqaga
             </a>
         </div>
+        {% endif %}
     </form>
 </div>
 
