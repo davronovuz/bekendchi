@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Guruhlar{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="display-4 fw-bold mb-5 text-center neon-text" style="font-family: 'Orbitron', sans-serif;">
+        Guruhlar
+    </h1>
+    <div class="row justify-content-center">
+        {% for group in groups %}
+        <div class="col-md-4 mb-4" data-aos="fade-up">
+            <div class="card bg-dark text-white border-0 shadow-lg">
+                <div class="card-body text-center">
+                    <h5 class="card-title" style="font-family: 'Orbitron', sans-serif;">{{ group.name }}</h5>
+                    <p class="card-text">{{ group.description|truncatewords:20 }}</p>
+                    <a href="{% url 'group_attendance' group.id %}" class="btn btn-outline-light mt-3" style="border-color: #00adb5; color: #00adb5;">
+                        Davomatni Ko‘rish
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center" style="color: #ffffff;">Hozircha guruhlar yo‘q.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .neon-text {
+        background: linear-gradient(90deg, #00adb5, #ffffff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        transition: all 0.3s ease;
+        box-shadow: 0 0 20px rgba(0, 173, 181, 0.5);
+    }
+    .btn-outline-light:hover {
+        background-color: #00adb5;
+        color: #121212;
+    }
+</style>
+{% endblock %}

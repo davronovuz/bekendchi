@@ -30,6 +30,7 @@ urlpatterns =[
     path('blog/', include('apps.blog.urls')),
     path('account/', include('apps.account.urls')),
     path('problems/', include('problems.urls')),
+    path('ustozlar/', include('ustoz.urls')),
 
 
 ]

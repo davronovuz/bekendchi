@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'apps.portfolio',
     'apps.shared',
     'problems',
+    'ustoz',
 
     # 3rd party apps
     'rest_framework',

@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}{{ group.name }} - Davomat{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="display-4 fw-bold mb-5 text-center neon-text" style="font-family: 'Orbitron', sans-serif;">
+        {{ group.name }} - Davomat
+    </h1>
+    <form method="POST" action="{% url 'update_attendance' group.id %}">
+        {% csrf_token %}
+        <div class="table-responsive">
+            <table class="table table-dark table-bordered">
+                <thead>
+                    <tr>
+                        <th rowspan="2">O‘quvchining F.I.O</th>
+                        {% for i in "123456789101112" %}
+                        <th colspan="2">{{ i }}-dars</th>
+                        {% endfor %}
+                        <th rowspan="2">Umumiy Ball</th>
+                    </tr>
+                    <tr>
+                        {% for i in "123456789101112" %}
+                        <th>Davomat</th>
+                        <th>Vazifa</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in attendance_data %}
+                    <tr>
+                        <td>{{ row.student.first_name }} {{ row.student.last_name }}</td>
+                        {% for attendance in row.attendances %}
+                        <td style="background-color: {% if attendance and attendance.is_present %}#28a745{% else %}#6c757d{% endif %}">
+                            <input type="checkbox" name="present_{{ row.student.id }}_{{ forloop.counter }}"
+                                   {% if attendance and attendance.is_present %}checked{% endif %}>
+                        </td>
+                        <td style="background-color: {% if attendance and attendance.task_completed %}#007bff{% else %}#6c757d{% endif %}">
+                            <input type="checkbox" name="task_{{ row.student.id }}_{{ forloop.counter }}"
+                                   {% if attendance and attendance.task_completed %}checked{% endif %}>
+                        </td>
+                        {% endfor %}
+                        <td>{{ row.score }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary">Saqlash</button>
+            <a href="{% url 'group_list' %}" class="btn btn-outline-light" style="border-color: #00adb5; color: #00adb5;">
+                Orqaga
+            </a>
+        </div>
+    </form>
+</div>
+
+<style>
+    .neon-text {
+        background: linear-gradient(90deg, #00adb5, #ffffff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .table th, .table td {
+        text-align: center;
+        vertical-align: middle;
+    }
+    .table th {
+        background-color: #1a1a1a;
+    }
+    .btn-outline-light:hover, .btn-primary:hover {
+        background-color: #00adb5;
+        color: #121212;
+    }
+    .btn-primary {
+        background-color: #00adb5;
+        border: none;
+        color: #121212;
+    }
+</style>
+{% endblock %}
