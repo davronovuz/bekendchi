@@ -15,7 +15,7 @@ def contest_list(request):
     return render(request, 'contest/contest_list.html', {'contests': contests})
 
 
-@login_required
+@login_required(login_url='ln')
 def contest_detail(request, contest_id):
     contest = get_object_or_404(Contest, id=contest_id)
 
@@ -41,7 +41,7 @@ def contest_detail(request, contest_id):
     })
 
 
-@login_required
+@login_required(login_url='ln')
 def problem_detail(request, problem_id):
     problem = get_object_or_404(Problem, id=problem_id)
     contest = problem.contest
@@ -65,7 +65,7 @@ def problem_detail(request, problem_id):
     })
 
 
-@login_required
+@login_required(login_url='ln')
 @csrf_exempt
 def submit_code(request):
     if request.method == 'POST':
@@ -103,7 +103,7 @@ def submit_code(request):
         })
 
 
-@login_required
+@login_required(login_url='ln')
 def leaderboard(request, contest_id):
     contest = get_object_or_404(Contest, id=contest_id)
 
