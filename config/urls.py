@@ -32,7 +32,7 @@ urlpatterns =[
     path('problems/', include('problems.urls')),
     path('ustozlar/', include('ustoz.urls')),
     path('portfel/', include('apps.portfolio.urls')),
-
+    path('contest/', include('contest.urls')),
 
 ]
 if settings.DEBUG:

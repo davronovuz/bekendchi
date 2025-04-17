@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'apps.shared',
     'problems',
     'ustoz',
+    'contest',
 
     # 3rd party apps
     'rest_framework',

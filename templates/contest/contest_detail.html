@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% block title %}{{ contest.title }}{% endblock %}
+
+{% block content %}
+<style>
+    .difficulty-easy {
+        color: #28a745; /* Yashil - Oson */
+        font-weight: bold;
+    }
+    .difficulty-medium {
+        color: #ffc107; /* Sariq - O‘rta */
+        font-weight: bold;
+    }
+    .difficulty-hard {
+        color: #dc3545; /* Qizil - Qiyin */
+        font-weight: bold;
+    }
+    .pagination .page-link {
+        background: #222831;
+        color: #00adb5;
+        border: 1px solid #00adb5;
+        margin: 0 2px;
+        transition: all 0.3s ease;
+    }
+    .pagination .page-link:hover {
+        background: #00adb5;
+        color: #121212;
+        box-shadow: 0 0 10px rgba(0, 173, 181, 0.8);
+    }
+    .pagination .page-item.active .page-link {
+        background: #00adb5;
+        color: #121212;
+        border: 1px solid #00adb5;
+    }
+    .card-body {
+        cursor: default; /* Card’ning o‘zi bosiladigan bo‘lmasligi uchun */
+    }
+    .btn-auth {
+        cursor: pointer; /* Tugma bosiladigan bo‘lishi uchun */
+    }
+</style>
+
+<div class="container">
+    <h1 class="neon-text text-center mb-4" data-aos="fade-up">{{ contest.title }}</h1>
+    <p class="text-center mb-3 text-muted" data-aos="fade-up">{{ contest.description }}</p>
+    <div class="text-center mb-3" data-aos="fade-up">
+        <p><strong>Boshlanish:</strong> {{ contest.start_time }}</p>
+        <p><strong>Tugash:</strong> {{ contest.end_time }}</p>
+        <p><strong>Holati:</strong>
+            {% if contest.is_ongoing %}
+                <span class="badge bg-success">Davom etmoqda</span>
+            {% else %}
+                <span class="badge bg-secondary">Yakunlangan</span>
+            {% endif %}
+        </p>
+    </div>
+    <div class="text-center mb-4" data-aos="fade-up">
+        <a href="{% url 'contest:leaderboard' contest.id %}" class="btn btn-auth">Qatnashuvchilar ro'yxati</a>
+    </div>
+    <h3 class="neon-text mb-3" data-aos="fade-up">Masalalar</h3>
+    <div class="row">
+        {% for problem in page_obj %}
+        <div class="col-lg-4 col-md-6 col-sm-12 mb-3" data-aos="fade-up">
+            <div class="card text-white">
+                <div class="card-body">
+                    <h5 class="card-title">{{ forloop.counter|add:page_obj.start_index|add:-1 }}. {{ problem.title }}</h5>
+                    <p class="card-text">
+                        <strong>Daraja:</strong>
+                        <span class="difficulty-{{ problem.difficulty|lower }}">{{ problem.get_difficulty_display }}</span><br>
+                        <strong>Vaqt Limiti:</strong> {{ problem.time_limit }} sekund<br>
+                        <strong>Ball:</strong> {{ problem.points }}
+                    </p>
+                    <a href="{% url 'contest:problem_detail' problem.id %}" class="btn btn-auth">Yechish</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center">
+            <p class="text-muted">Hozirda masalalar yo‘q.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                    <span aria-hidden="true">«</span>
+                </a>
+            </li>
+            {% endif %}
+            {% for num in page_obj.paginator.page_range %}
+            <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+            </li>
+            {% endfor %}
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                    <span aria-hidden="true">»</span>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

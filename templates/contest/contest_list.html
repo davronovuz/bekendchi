@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Contestlar{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="neon-text text-center mb-4" data-aos="fade-up">Musobaqalar</h1>
+    <div class="row">
+        {% for contest in contests %}
+        <div class="col-lg-4 col-md-6 col-sm-12 mb-3" data-aos="fade-up">
+            <div class="card text-white">
+                <div class="card-body">
+                    <h5 class="card-title">{{ contest.title }}</h5>
+                    <p class="card-text">{{ contest.description|truncatewords:15 }}</p>
+                    <p class="card-text">
+                        <strong>Boshlanish:</strong> {{ contest.start_time }}<br>
+                        <strong>Tugash:</strong> {{ contest.end_time }}<br>
+                        <strong>Holati:</strong>
+                        {% if contest.is_ongoing %}
+                            <span class="badge bg-success">Davom etmoqda</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Yakunlangan</span>
+                        {% endif %}
+                    </p>
+                    <a href="{% url 'contest:contest_detail' contest.id %}" class="btn btn-auth">Kirish</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center">
+            <p class="text-muted">Hozirda musobaqalar yo‘q.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
