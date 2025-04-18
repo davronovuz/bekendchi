@@ -36,7 +36,7 @@
                                 <input type="checkbox" name="task_{{ row.student.id }}_{{ forloop.counter }}"
                                        {% if attendance and attendance.task_completed %}checked{% endif %}
                                        {% if not user.is_authenticated or not user.is_superuser %}disabled{% endif %}>
-                                <span class="slider round task-slider"></span>
+                                <span class="slider round"></span>
                             </label>
                         </td>
                         <td>
@@ -44,7 +44,7 @@
                                 <input type="checkbox" name="present_{{ row.student.id }}_{{ forloop.counter }}"
                                        {% if attendance and attendance.is_present %}checked{% endif %}
                                        {% if not user.is_authenticated or not user.is_superuser %}disabled{% endif %}>
-                                <span class="slider round present-slider"></span>
+                                <span class="slider round"></span>
                             </label>
                         </td>
                         {% endfor %}
@@ -53,7 +53,7 @@
                                 <input type="checkbox" name="payment_{{ row.student.id }}"
                                        {% if row.payment %}checked{% endif %}
                                        {% if not user.is_authenticated or not user.is_superuser %}disabled{% endif %}>
-                                <span class="slider round payment-slider"></span>
+                                <span class="slider round"></span>
                             </label>
                         </td>
                         <td class="score-cell">{{ row.score }}</td>
@@ -108,16 +108,22 @@
         font-family: 'Poppins', sans-serif;
         border: 1px solid rgba(0, 173, 181, 0.2);
         min-width: 60px; /* Har bir ustun uchun minimal kenglik */
+        z-index: 0; /* F.I.O ustidan pastroq */
     }
 
     /* Fixed Column for Student Names */
     .fixed-column {
         position: sticky;
         left: 0;
-        background-color: #1c2526;
-        z-index: 1;
+        background: linear-gradient(145deg, #1c2526, #283031); /* Farqli fon */
+        z-index: 2; /* Boshqa ustunlardan yuqori */
         min-width: 200px; /* O‘quvchilar ismi uchun kengroq joy */
-        box-shadow: 3px 0 5px rgba(0, 173, 181, 0.1);
+        box-shadow: 3px 0 5px rgba(0, 173, 181, 0.2); /* Neon soya */
+        color: #ffffff;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     /* Gradient Header */
@@ -127,6 +133,9 @@
         font-weight: 600;
         text-transform: uppercase;
         transition: all 0.3s;
+        position: sticky;
+        top: 0;
+        z-index: 1; /* F.I.O dan pastroq, lekin boshqa ustunlardan yuqori */
     }
 
     .gradient-header:hover {
@@ -183,16 +192,9 @@
         border-radius: 50%;
     }
 
-    input:checked + .task-slider {
-        background: linear-gradient(45deg, #007bff, #00adb5);
-    }
-
-    input:checked + .present-slider {
-        background: linear-gradient(45deg, #28a745, #00adb5);
-    }
-
-    input:checked + .payment-slider {
-        background: linear-gradient(45deg, #28a745, #00adb5);
+    input:checked + .slider {
+        background: linear-gradient(45deg, #00adb5, #1c2526); /* Neon-yashil gradient */
+        box-shadow: 0 0 5px rgba(0, 173, 181, 0.5);
     }
 
     input:checked + .slider:before {
@@ -282,6 +284,9 @@
         }
         input:checked + .slider:before {
             transform: translateX(15px);
+        }
+        .fixed-column {
+            min-width: 120px;
         }
     }
 </style>
