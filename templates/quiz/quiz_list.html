@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Quiz Ro‘yxati | Bekendchi{% endblock %}
+
+{% block extra_head %}
+<meta name="description" content="Har qanday fan bo‘yicha qiziqarli quizlarda ishtirok eting!">
+<meta property="og:title" content="Quiz Ro‘yxati | Bekendchi">
+<meta property="og:description" content="O‘zingizni sinab ko‘ring va eng yaxshi natijalarni qo‘lga kiriting!">
+<style>
+    .neon-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 15px rgba(0, 173, 181, 0.7);
+        transition: all 0.3s ease;
+    }
+    .neon-text {
+        color: #00adb5;
+        text-shadow: 0 0 5px rgba(0, 173, 181, 0.5);
+    }
+    .badge-completed {
+        background-color: #00adb5;
+        color: white;
+        font-size: 0.8rem;
+        padding: 2px 8px;
+        border-radius: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5" data-aos="fade-up">
+    <h1 class="neon-text mb-4">Quiz Ro‘yxati</h1>
+
+    <!-- Filtr va qidiruv formasi -->
+    <form method="GET" class="mb-4" data-aos="zoom-in">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label for="subject" class="form-label">Fan tanlang</label>
+                <select name="subject" id="subject" class="form-select search-input" onchange="this.form.submit()" aria-label="Fan bo‘yicha filtr">
+                    <option value="">Barcha fanlar</option>
+                    {% for subject in subjects %}
+                        <option value="{{ subject.id }}" {% if selected_subject == subject.id|stringformat:"s" %}selected{% endif %}>
+                            {{ subject.icon|default:"📚" }} {{ subject.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="difficulty" class="form-label">Qiyinlik</label>
+                <select name="difficulty" id="difficulty" class="form-select search-input" onchange="this.form.submit()" aria-label="Qiyinlik bo‘yicha filtr">
+                    <option value="">Barcha darajalar</option>
+                    <option value="oson" {% if selected_difficulty == "oson" %}selected{% endif %}>Oson</option>
+                    <option value="orta" {% if selected_difficulty == "orta" %}selected{% endif %}>O‘rta</option>
+                    <option value="qiyin" {% if selected_difficulty == "qiyin" %}selected{% endif %}>Qiyin</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="q" class="form-label">Qidiruv</label>
+                <input type="text" name="q" id="q" class="form-control search-input" value="{{ search_query|default:'' }}" placeholder="Quiz nomini kiriting" aria-label="Quiz qidiruvi">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-auth w-100">Filtrlash</button>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-12">
+                <label class="form-label">Tartiblash:</label>
+                <div class="form-check form-check-inline">
+                    <input type="radio" name="sort" id="sort_newest" value="newest" class="form-check-input" {% if sort_by == "newest" %}checked{% endif %} onchange="this.form.submit()">
+                    <label for="sort_newest" class="form-check-label">Yangi</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input type="radio" name="sort" id="sort_popular" value="popular" class="form-check-input" {% if sort_by == "popular" %}checked{% endif %} onchange="this.form.submit()">
+                    <label for="sort_popular" class="form-check-label">Mashhur</label>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- Umumiy statistika -->
+    <div class="mb-4" data-aos="fade-up">
+        <p class="text-muted">
+            Jami quizlar: <strong>{{ page_obj.paginator.count }}</strong> |
+            Tanlangan fan: <strong>{{ selected_subject|default:"Barchasi" }}</strong>
+        </p>
+    </div>
+
+    <!-- Quizlar ro‘yxati -->
+    <div class="row">
+        {% for quiz in page_obj %}
+            <div class="col-md-6 col-lg-4 mb-4" data-aos="flip-left">
+                <div class="card neon-card">
+                    {% if quiz.cover_image %}
+                        <img src="{{ quiz.cover_image }}" class="card-img-top" alt="{{ quiz.title }} tasviri" style="height: 150px; object-fit: cover;">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title neon-text">
+                            {{ quiz.title }}
+                            {% if quiz.id in user_quizzes %}
+                                <span class="badge badge-completed ms-2">Tugatilgan ✅</span>
+                            {% endif %}
+                        </h5>
+                        <p class="card-text">
+                            <strong>Fan:</strong> {{ quiz.subject.icon|default:"📚" }} {{ quiz.subject.name }}<br>
+                            <strong>Qiyinlik:</strong> {{ quiz.get_difficulty_display|default:"Noma'lum" }}<br>
+                            <strong>Ishtirokchilar:</strong> {{ quiz.participant_count }}<br>
+                            {{ quiz.description|truncatewords:20 }}
+                        </p>
+                        <p class="card-text">
+                            <strong>Holati:</strong>
+                            {% if quiz.is_ongoing %}
+                                <span class="text-success">Faol</span>
+                            {% else %}
+                                <span class="text-danger">Yakunlangan</span>
+                            {% endif %}
+                        </p>
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'quizz:quiz_detail' quiz.id %}" class="btn btn-auth">Boshlash</a>
+                            <a href="{% url 'quizz:quiz_leaderboard' quiz.id %}" class="btn btn-auth">Leaderboard</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12" data-aos="fade-up">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <p class="card-text">Hozircha quizlar yo‘q. 😔</p>
+                        <a href="{% url 'quizz:quiz_list' %}" class="btn btn-auth">Boshqa fanlarni ko‘rish</a>
+                        {% if user.is_staff %}
+                            <a href="{% url 'admin:quizz_quiz_add' %}" class="btn btn-auth">Yangi quiz qo‘shish</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.paginator.num_pages > 1 %}
+        <nav aria-label="Page navigation" class="mt-4" data-aos="fade-up">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link btn-auth" href="?page=1{% if selected_subject %}&subject={{ selected_subject }}{% endif %}{% if selected_difficulty %}&difficulty={{ selected_difficulty }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}" aria-label="Birinchi sahifa">&laquo;</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link btn-auth" href="?page={{ page_obj.previous_page_number }}{% if selected_subject %}&subject={{ selected_subject }}{% endif %}{% if selected_difficulty %}&difficulty={{ selected_difficulty }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}" aria-label="Oldingi sahifa">Oldingi</a>
+                    </li>
+                {% endif %}
+                {% for num in page_obj.paginator.page_range %}
+                    {% if num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %}
+                        <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                            <a class="page-link btn-auth" href="?page={{ num }}{% if selected_subject %}&subject={{ selected_subject }}{% endif %}{% if selected_difficulty %}&difficulty={{ selected_difficulty }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link btn-auth" href="?page={{ page_obj.next_page_number }}{% if selected_subject %}&subject={{ selected_subject }}{% endif %}{% if selected_difficulty %}&difficulty={{ selected_difficulty }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}" aria-label="Keyingi sahifa">Keyingi</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link btn-auth" href="?page={{ page_obj.paginator.num_pages }}{% if selected_subject %}&subject={{ selected_subject }}{% endif %}{% if selected_difficulty %}&difficulty={{ selected_difficulty }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}" aria-label="Oxirgi sahifa">&raquo;</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+</div>
+{% endblock %}

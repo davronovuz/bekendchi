@@ -25,9 +25,6 @@ SECRET_KEY = 'django-insecure-r3u48ub@$s-^v3slm%f(%dh8uy605c17ade#gmxd75m0++ma96
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
-
-# Application definition
-
 INSTALLED_APPS = [
     'jazzmin',
     'django.contrib.admin',
@@ -43,7 +40,9 @@ INSTALLED_APPS = [
     'apps.shared',
     'problems',
     'ustoz',
+    'quizz',
     'contest',
+
 
     # 3rd party apps
     'rest_framework',
@@ -54,6 +53,9 @@ INSTALLED_APPS = [
 
 
 ]
+
+# Application definition
+
 
 CSRF_TRUSTED_ORIGINS = [
     'http://194.242.56.190:7080',

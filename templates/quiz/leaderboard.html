@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ quiz.title }} Leaderboard | Bekendchi{% endblock %}
+
+{% block extra_head %}
+<meta name="description" content="{{ quiz.title }} uchun eng yaxshi ishtirokchilar ro‘yxatini ko‘ring!">
+<meta property="og:title" content="{{ quiz.title }} Leaderboard | Bekendchi">
+<meta property="og:description" content="{{ quiz.title }} uchun eng yaxshi ishtirokchilar ro‘yxatini ko‘ring!">
+<style>
+    .neon-text {
+        color: #00adb5;
+        text-shadow: 0 0 5px rgba(0, 173, 181, 0.5);
+    }
+    .table-dark tr:hover {
+        background-color: rgba(0, 173, 181, 0.2);
+        transition: all 0.3s ease;
+    }
+    .medal {
+        font-size: 1.2rem;
+        margin-right: 5px;
+    }
+    .badge-best {
+        background-color: #00adb5;
+        color: white;
+        font-size: 0.8rem;
+        padding: 2px 8px;
+        border-radius: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5" data-aos="fade-up">
+    <h1 class="neon-text mb-4">{{ quiz.title }} Leaderboard</h1>
+    <div class="card mb-4" data-aos="zoom-in">
+        {% if quiz.cover_image %}
+            <img src="{{ quiz.cover_image }}" class="card-img-top" alt="{{ quiz.title }} tasviri" style="height: 200px; object-fit: cover;">
+        {% endif %}
+        <div class="card-body">
+            <p class="card-text"><strong>Fan:</strong> {{ quiz.subject.icon|default:"📚" }} {{ quiz.subject.name }}</p>
+            <p class="card-text"><strong>Jami ishtirokchilar:</strong> {{ total_participants }}</p>
+            <p class="card-text"><strong>O‘rtacha ball:</strong> {{ avg_score }}</p>
+            <p class="card-text"><strong>Eng yuqori streak:</strong> {{ max_streak }}</p>
+            {% if user_position %}
+                <p class="card-text"><strong>Sizning o‘rningiz:</strong> {{ user_position }}-o‘rin 🏆</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Filtrlash -->
+    <form method="GET" class="mb-4" data-aos="zoom-in">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label for="sort" class="form-label">Tartiblash</label>
+                <select name="sort" id="sort" class="form-select search-input" onchange="this.form.submit()" aria-label="Tartiblash usuli">
+                    <option value="score" {% if request.GET.sort == 'score' %}selected{% endif %}>Eng yuqori ball</option>
+                    <option value="streak" {% if request.GET.sort == 'streak' %}selected{% endif %}>Eng yuqori streak</option>
+                    <option value="recent" {% if request.GET.sort == 'recent' %}selected{% endif %}>So‘nggi urinishlar</option>
+                </select>
+            </div>
+        </div>
+    </form>
+
+    <div class="table-responsive" data-aos="fade-up">
+        <table class="table table-dark" aria-label="Leaderboard jadvali">
+            <thead>
+                <tr>
+                    <th scope="col">O‘rin</th>
+                    <th scope="col">Foydalanuvchi</th>
+                    <th scope="col">Umumiy ball</th>
+                    <th scope="col">To‘g‘ri</th>
+                    <th scope="col">Xato</th>
+                    <th scope="col">Streak</th>
+                    <th scope="col">Yulduzlar</th>
+                    <th scope="col">Nishonlar</th>
+                    <th scope="col">Urinish</th>
+                    <th scope="col">Vaqt</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for submission in page_obj %}
+                    <tr data-aos="fade-right">
+                        <td>
+                            {% if forloop.counter0|add:page_obj.start_index == 1 %}
+                                <span class="medal">🏆</span>
+                            {% elif forloop.counter0|add:page_obj.start_index == 2 %}
+                                <span class="medal">🥈</span>
+                            {% elif forloop.counter0|add:page_obj.start_index == 3 %}
+                                <span class="medal">🥉</span>
+                            {% else %}
+                                {{ forloop.counter0|add:page_obj.start_index }}
+                            {% endif %}
+                            {% if submission.user.id == user.id %}
+                                <span class="badge badge-best ms-1">Siz</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ submission.user.username }}</td>
+                        <td>{{ submission.total_score }}</td>
+                        <td>{{ submission.correct_answers }}</td>
+                        <td>{{ submission.wrong_answers }}</td>
+                        <td>{{ submission.streak|default:"0" }}</td>
+                        <td>
+                            {% for i in "123" %}
+                                {% if forloop.counter <= submission.stars %}
+                                    ⭐
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+
+                        <td>{{ submission.attempt_number }}</td>
+                        <td>{{ submission.submitted_at|date:"Y-m-d H:i" }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="10" class="text-center" data-aos="fade-up">
+                            Hozircha ishtirokchilar yo‘q. 😔
+                            <br>
+                            <a href="{% url 'quiz:quiz_detail' quiz.id %}" class="btn btn-auth mt-2">Quiz’da qatnashish</a>
+                            <a href="{% url 'quiz:quiz_list' %}" class="btn btn-auth mt-2">Boshqa quiz’ni ko‘rish</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.paginator.num_pages > 1 %}
+        <nav aria-label="Page navigation" class="mt-4" data-aos="fade-up">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link btn-auth" href="?page=1{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}" aria-label="Birinchi sahifa">«</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link btn-auth" href="?page={{ page_obj.previous_page_number }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}" aria-label="Oldingi sahifa">Oldingi</a>
+                    </li>
+                {% endif %}
+                {% for num in page_obj.paginator.page_range %}
+                    {% if num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %}
+                        <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                            <a class="page-link btn-auth" href="?page={{ num }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link btn-auth" href="?page={{ page_obj.next_page_number }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}" aria-label="Keyingi sahifa">Keyingi</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link btn-auth" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}" aria-label="Oxirgi sahifa">»</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+</div>
+{% endblock %}
