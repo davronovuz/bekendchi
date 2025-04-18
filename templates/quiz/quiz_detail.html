@@ -8,135 +8,205 @@
 <meta property="og:title" content="{{ quiz.title }} | Bekendchi">
 <meta property="og:description" content="{{ quiz.description|default:'Qiziqarli quizda bilimlaringizni sinab ko‘ring!'|truncatewords:20 }}">
 <style>
+    :root {
+        --neon-cyan: #00adb5;
+        --neon-light: #00d4dd;
+        --dark-bg: #1a1a1a;
+        --card-bg: #2a2a2a;
+        --text-white: #ffffff;
+        --text-muted: #bbbbbb;
+        --gold-star: #ffd700;
+    }
     .neon-text {
-        color: #00adb5;
-        text-shadow: 0 0 7px rgba(0, 173, 181, 0.8), 0 0 15px rgba(0, 173, 181, 0.6);
+        color: var(--text-white);
+        text-shadow: 0 0 5px var(--neon-cyan), 0 0 10px var(--neon-light);
         font-weight: 700;
+        letter-spacing: 1px;
     }
     .question-card {
-        background: #2a2a2a;
-        border: 2px solid transparent;
-        border-image: linear-gradient(45deg, #00adb5, #00d4dd) 1;
-        transition: all 0.3s ease;
+        background: var(--card-bg);
+        border: 2px solid var(--neon-cyan);
+        border-radius: 12px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
         box-shadow: 0 4px 15px rgba(0, 173, 181, 0.3);
         margin-bottom: 20px;
+        min-height: 150px;
     }
     .question-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 8px 25px rgba(0, 173, 181, 0.6);
     }
     .card-body {
-        color: #ffffff !important;
+        color: var(--text-white) !important;
+        padding: 20px;
     }
-    .card-title, .form-check-label, .card-text {
-        color: #ffffff !important;
-        font-weight: 400;
+    .card-title {
+        color: var(--text-white) !important;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+    .card-text, .form-check-label {
+        color: var(--text-white) !important;
+        font-size: 1rem;
+        line-height: 1.5;
     }
     .form-check-input {
-        background-color: #fff;
-        border: 2px solid #00adb5;
-        width: 1.2rem;
-        height: 1.2rem;
+        background-color: var(--card-bg);
+        border: 2px solid var(--neon-cyan);
+        width: 1.3rem;
+        height: 1.3rem;
+        cursor: pointer;
     }
     .form-check-input:checked {
-        background-color: #00adb5;
-        border-color: #00d4dd;
+        background-color: var(--neon-cyan);
+        border-color: var(--neon-light);
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
     }
     .form-control {
         background: #333;
-        color: #ffffff !important;
-        border: 1px solid #00adb5;
-        transition: all 0.3s ease;
+        color: var(--text-white) !important;
+        border: 1px solid var(--neon-cyan);
+        border-radius: 8px;
+        padding: 10px;
     }
     .form-control:focus {
         background: #444;
-        color: #ffffff;
-        border-color: #00d4dd;
+        color: var(--text-white) !important;
+        border-color: var(--neon-light);
         box-shadow: 0 0 10px rgba(0, 173, 181, 0.5);
     }
     .form-control::placeholder {
-        color: #bbb;
+        color: var(--text-muted) !important;
+        opacity: 1;
     }
     .custom-alert {
         position: fixed;
         top: 20px;
         right: 20px;
-        z-index: 1000;
+        z-index: 1050;
         padding: 15px 20px;
         border-radius: 8px;
         max-width: 400px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
         display: flex;
         justify-content: space-between;
         align-items: center;
+        animation: slideIn 0.5s ease;
     }
     .custom-alert-success {
-        background: linear-gradient(45deg, #00adb5, #00d4dd);
-        color: #fff;
+        background: linear-gradient(45deg, var(--neon-cyan), var(--neon-light));
+        color: var(--text-white);
     }
     .custom-alert-error {
         background: linear-gradient(45deg, #dc3545, #e4606d);
-        color: #fff;
+        color: var(--text-white);
     }
     .badge-best {
-        background: linear-gradient(45deg, #00adb5, #00d4dd);
-        color: #fff;
+        background: linear-gradient(45deg, var(--neon-cyan), var(--neon-light));
+        color: var(--text-white);
         font-size: 0.9rem;
-        padding: 4px 10px;
-        border-radius: 12px;
-        box-shadow: 0 0 5px rgba(0, 173, 181, 0.5);
+        padding: 5px 12px;
+        border-radius: 15px;
+        box-shadow: 0 0 8px rgba(0, 173, 181, 0.5);
+        margin-right: 5px;
+    }
+    .progress {
+        height: 1.5rem;
+        background: #333;
+        border: 1px solid var(--neon-cyan);
+        border-radius: 25px;
+        overflow: hidden;
     }
     .progress-bar {
-        background: linear-gradient(90deg, #00adb5, #00d4dd);
+        background: linear-gradient(90deg, var(--neon-cyan), var(--neon-light));
         transition: width 0.5s ease-in-out;
         animation: pulse 2s infinite;
+        border-radius: 25px;
     }
     @keyframes pulse {
         0% { opacity: 1; }
-        50% { opacity: 0.8; }
+        50% { opacity: 0.7; }
         100% { opacity: 1; }
     }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
     .btn-auth {
-        background: linear-gradient(45deg, #00adb5, #00d4dd);
+        background: linear-gradient(45deg, var(--neon-cyan), var(--neon-light));
         border: none;
-        color: #fff;
-        padding: 10px 20px;
+        color: var(--text-white);
+        padding: 12px 24px;
         border-radius: 25px;
+        font-weight: 600;
         transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
     }
     .btn-auth:hover {
         transform: scale(1.05);
-        box-shadow: 0 0 10px rgba(0, 173, 181, 0.7);
+        box-shadow: 0 0 15px rgba(0, 173, 181, 0.7);
     }
     .stars {
-        color: #ffd700;
-        font-size: 1.2rem;
+        color: var(--gold-star);
+        font-size: 1.3rem;
+        text-shadow: 0 0 5px var(--gold-star);
     }
     .table-quiz {
-        background: #1a1a1a;
-        color: #ffffff;
-        border: 1px solid #00adb5;
+        background: var(--card-bg);
+        color: var(--text-white);
+        border: 1px solid var(--neon-cyan);
+        border-radius: 8px;
+        overflow: hidden;
     }
     .table-quiz th, .table-quiz td {
-        border: 1px solid #00adb5;
+        border: 1px solid var(--neon-cyan);
         padding: 12px;
         text-align: center;
         vertical-align: middle;
-        color: #ffffff;
+        color: var(--text-white);
     }
     .table-quiz tr:hover {
         background: linear-gradient(90deg, rgba(0, 173, 181, 0.2), rgba(0, 173, 181, 0.4));
     }
+    .question-meta {
+        background: linear-gradient(90deg, rgba(0, 173, 181, 0.1), rgba(0, 173, 181, 0.2));
+        padding: 10px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        color: var(--text-white);
+    }
+    .timer {
+        color: var(--neon-cyan);
+        font-weight: 600;
+        text-shadow: 0 0 5px var(--neon-cyan);
+    }
+    .text-danger {
+        color: #ff4d4d !important;
+    }
     @media (max-width: 576px) {
         .question-card {
-            margin: 0 10px;
-        }
-        .btn-auth {
-            padding: 8px 15px;
-            font-size: 0.9rem;
+            margin: 0 5px;
+            padding: 10px;
         }
         .card-title {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
+        }
+        .btn-auth {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+        .progress {
+            height: 1rem;
+        }
+        .table-quiz th, .table-quiz td {
+            padding: 8px;
+            font-size: 0.9rem;
         }
     }
 </style>
@@ -144,11 +214,14 @@
 {% endblock %}
 
 {% block content %}
-<div class="container mt-5" data-aos="fade-up">
-    <h1 class="neon-text mb-4">{{ quiz.title }}</h1>
-    <div class="card mb-4" data-aos="zoom-in" style="background: #2a2a2a; border: 2px solid #00adb5;">
+<div class="container mt-5 mb-5" data-aos="fade-up">
+    <!-- Quiz sarlavhasi -->
+    <h1 class="neon-text mb-4 text-center">{{ quiz.title }}</h1>
+
+    <!-- Quiz haqida umumiy ma'lumot -->
+    <div class="card mb-4" data-aos="zoom-in" style="background: var(--card-bg); border: 2px solid var(--neon-cyan);">
         {% if quiz.cover_image %}
-            <img src="{{ quiz.cover_image }}" class="card-img-top" alt="{{ quiz.title }} tasviri" style="height: 200px; object-fit: cover;">
+            <img src="{{ quiz.cover_image }}" class="card-img-top" alt="{{ quiz.title }} tasviri" style="height: 200px; object-fit: cover; border-top-left-radius: 8px; border-top-right-radius: 8px;">
         {% endif %}
         <div class="card-body">
             <p class="card-text"><strong>Fan:</strong> {{ quiz.subject.icon|default:"📚" }} {{ quiz.subject.name }}</p>
@@ -163,7 +236,7 @@
                 {% endif %}
             </p>
             <p class="card-text"><strong>Maksimal urinishlar:</strong> {{ quiz.max_attempts }}</p>
-            <p class="card-text"><strong>Ball qoidalari:</strong> To‘g‘ri javob uchun +5 ball, Streak bonusi: +2</p>
+            <p class="card-text"><strong>Ball qoidalari:</strong> To‘g‘ri javob uchun +{{ settings.points_per_correct }} ball, Streak bonusi: +{{ settings.streak_bonus }}</p>
             {% if user_badges %}
                 <p class="card-text"><strong>Sizning nishonlaringiz:</strong>
                     {% for badge in user_badges %}
@@ -177,56 +250,65 @@
         </div>
     </div>
 
+    <!-- Savollar bo‘limi -->
     {% if can_attempt %}
         {% if questions|length > 0 %}
-            <h2 class="neon-text mb-4">Savollar ({{ questions|length }} ta)</h2>
+            <h2 class="neon-text mb-4 text-center">Savollar ({{ questions|length }} ta)</h2>
             <div class="progress mb-4" data-aos="fade-up">
                 <div class="progress-bar" role="progressbar" style="width: 0%;" id="progress-bar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
             <form id="quiz-form" data-aos="fade-up">
                 {% csrf_token %}
                 {% for question in questions %}
-                    <div class="card question-card mb-4" data-aos="fade-right" id="question-{{ forloop.counter }}">
+                    <div class="card question-card" data-aos="fade-right" id="question-{{ forloop.counter }}">
                         <div class="card-body">
-                            <h5 class="card-title">{{ forloop.counter }}/{{ questions|length }}. {{ question.text }}</h5>
-                            <p class="card-text">
-                                <strong>Turi:</strong> {% if question.question_type == 'MC' %}Ko‘p tanlovli{% elif question.question_type == 'SA' %}Qisqa javob{% else %}Kod yozish{% endif %}<br>
-                                <strong>Ball:</strong> {{ question.points|default:5 }}<br>
-                                {% if question.time_limit %}
-                                    <strong>Vaqt:</strong> <span id="timer-{{ question.id }}">{{ question.time_limit }}</span> soniya
-                                {% endif %}
-                            </p>
+                            {% if question.text %}
+                                <h5 class="card-title">{{ forloop.counter }}/{{ questions|length }}. {{ question.text }}</h5>
+                            {% else %}
+                                <h5 class="card-title text-danger">Savol matni topilmadi</h5>
+                            {% endif %}
+                            <div class="question-meta">
+                                <p class="card-text mb-0">
+                                    <strong>Turi:</strong> {% if question.question_type == 'MC' %}Ko‘p tanlovli{% elif question.question_type == 'SA' %}Qisqa javob{% else %}Kod yozish{% endif %}<br>
+                                    <strong>Ball:</strong> {{ question.points|default:5 }}<br>
+                                    {% if question.time_limit %}
+                                        <strong>Vaqt:</strong> <span class="timer" id="timer-{{ question.id }}">{{ question.time_limit }}</span> soniya
+                                    {% endif %}
+                                </p>
+                            </div>
                             {% if question.question_type == 'MC' %}
-                                {% for choice in question.choices.all %}
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="question_{{ question.id }}"
-                                               value="{{ choice.id }}" id="choice_{{ choice.id }}" required aria-describedby="question_{{ question.id }}_error">
-                                        <label class="form-check-label" for="choice_{{ choice.id }}">
-                                            {{ choice.text|default:"Javob varianti yo‘q" }}
-                                        </label>
-                                    </div>
-                                {% empty %}
-                                    <p class="text-danger">Javob variantlari topilmadi.</p>
-                                {% endfor %}
-                                <div id="question_{{ question.id }}_error" class="text-danger" style="display: none;">Iltimos, javob tanlang.</div>
+                                {% if question.choices.all %}
+                                    {% for choice in question.choices.all %}
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="radio" name="question_{{ question.id }}"
+                                                   value="{{ choice.id }}" id="choice_{{ choice.id }}" required aria-describedby="question_{{ question.id }}_error">
+                                            <label class="form-check-label" for="choice_{{ choice.id }}">
+                                                {{ choice.text|default:"Javob varianti yo‘q" }}
+                                            </label>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <p class="card-text text-danger">Javob variantlari topilmadi.</p>
+                                {% endif %}
+                                <div id="question_{{ question.id }}_error" class="card-text text-danger mt-2" style="display: none;">Iltimos, javob tanlang.</div>
                             {% elif question.question_type == 'SA' %}
-                                <textarea class="form-control search-input" name="question_{{ question.id }}" rows="4" placeholder="Javobingizni kiriting" required aria-describedby="question_{{ question.id }}_error"></textarea>
-                                <div id="question_{{ question.id }}_error" class="text-danger" style="display: none;">Iltimos, javob kiriting.</div>
+                                <textarea class="form-control" name="question_{{ question.id }}" rows="4" placeholder="Javobingizni kiriting" required aria-describedby="question_{{ question.id }}_error"></textarea>
+                                <div id="question_{{ question.id }}_error" class="card-text text-danger mt-2" style="display: none;">Iltimos, javob kiriting.</div>
                             {% elif question.question_type == 'CD' %}
-                                <textarea class="form-control search-input" name="question_{{ question.id }}" rows="10" placeholder="Kodni yozing" required aria-describedby="question_{{ question.id }}_error"></textarea>
-                                <div id="question_{{ question.id }}_error" class="text-danger" style="display: none;">Iltimos, kod kiriting.</div>
+                                <textarea class="form-control" name="question_{{ question.id }}" rows="10" placeholder="Kodni yozing" required aria-describedby="question_{{ question.id }}_error"></textarea>
+                                <div id="question_{{ question.id }}_error" class="card-text text-danger mt-2" style="display: none;">Iltimos, kod kiriting.</div>
                             {% endif %}
                         </div>
                     </div>
                 {% endfor %}
-                <div class="d-flex justify-content-between">
+                <div class="d-flex justify-content-between mt-4">
                     <button type="button" class="btn btn-auth" id="prev-question" disabled>Oldingi</button>
                     <button type="button" class="btn btn-auth" id="next-question">Keyingi</button>
                     <button type="submit" class="btn btn-auth" id="submit-btn" style="display: none;">Javoblarni yuborish</button>
                 </div>
             </form>
 
-            <div class="messages-container" style="position: relative;"></div>
+            <div class="messages-container" style="position: fixed; top: 20px; right: 20px;"></div>
 
             <script>
                 // Savollar navigatsiyasi
@@ -238,13 +320,6 @@
                 const nextBtn = document.getElementById('next-question');
                 const submitBtn = document.getElementById('submit-btn');
 
-                if (totalQuestions === 0) {
-                    console.error('Hech qanday savol topilmadi.');
-                    showAlert('error', 'Savollar topilmadi. Iltimos, keyinroq qayta urinib ko‘ring.');
-                } else {
-                    console.log(`Jami savollar soni: ${totalQuestions}`);
-                }
-
                 function showQuestion(index) {
                     if (index < 0 || index >= totalQuestions) {
                         console.error(`Noto‘g‘ri savol indeksi: ${index}`);
@@ -254,23 +329,44 @@
                         q.style.display = i === index ? 'block' : 'none';
                     });
                     currentQuestion = index;
-                    progressBar.style.width = `${((index + 1) / totalQuestions) * 100}%`;
-                    progressBar.setAttribute('aria-valuenow', ((index + 1) / totalQuestions) * 100);
+                    const progress = ((index + 1) / totalQuestions) * 100;
+                    progressBar.style.width = `${progress}%`;
+                    progressBar.setAttribute('aria-valuenow', progress);
                     prevBtn.disabled = index === 0;
                     nextBtn.style.display = index === totalQuestions - 1 ? 'none' : 'inline-block';
                     submitBtn.style.display = index === totalQuestions - 1 ? 'inline-block' : 'none';
-                    progressBar.style.background = `linear-gradient(90deg, #00adb5 ${index / totalQuestions * 100}%, #00d4dd)`;
+                }
+
+                if (totalQuestions === 0) {
+                    console.error('Hech qanday savol topilmadi.');
+                    showAlert('error', 'Savollar topilmadi. Iltimos, admin bilan bog‘laning.');
+                } else {
+                    showQuestion(0);
                 }
 
                 prevBtn.addEventListener('click', () => {
                     if (currentQuestion > 0) showQuestion(currentQuestion - 1);
                 });
                 nextBtn.addEventListener('click', () => {
-                    if (currentQuestion < totalQuestions - 1) showQuestion(currentQuestion + 1);
+                    if (validateCurrentQuestion() && currentQuestion < totalQuestions - 1) {
+                        showQuestion(currentQuestion + 1);
+                    }
                 });
 
-                if (totalQuestions > 0) {
-                    showQuestion(0);
+                // Validatsiya
+                function validateCurrentQuestion() {
+                    const currentCard = questions[currentQuestion];
+                    const questionId = currentCard.querySelector('textarea, input[type="radio"]:checked')?.name?.split('_')[1];
+                    if (!questionId) return true;
+                    const errorDiv = currentCard.querySelector(`#question_${questionId}_error`);
+                    const radio = currentCard.querySelector('input[type="radio"]:checked');
+                    const textarea = currentCard.querySelector('textarea');
+                    if (radio || (textarea && textarea.value.trim())) {
+                        errorDiv.style.display = 'none';
+                        return true;
+                    }
+                    errorDiv.style.display = 'block';
+                    return false;
                 }
 
                 // Vaqt hisoblagichi
@@ -293,13 +389,15 @@
                 // Form yuborish
                 document.getElementById('quiz-form').addEventListener('submit', async (e) => {
                     e.preventDefault();
+                    if (!validateCurrentQuestion()) {
+                        showAlert('error', 'Iltimos, joriy savolga javob bering.');
+                        return;
+                    }
                     const form = e.target;
                     const quizId = {{ quiz.id }};
                     const answers = [];
                     const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-                    let valid = true;
 
-                    // Javob yig‘ish va validatsiya
                     questions.forEach(card => {
                         const questionId = card.querySelector('textarea, input[type="radio"]:checked')?.name?.split('_')[1];
                         if (!questionId) return;
@@ -307,31 +405,15 @@
                         const answer = { question_id: parseInt(questionId) };
                         const radio = card.querySelector('input[type="radio"]:checked');
                         const textarea = card.querySelector('textarea');
-                        const errorDiv = card.querySelector(`#question_${questionId}_error`);
 
                         if (radio) {
                             answer.choice_id = parseInt(radio.value);
-                        } else if (textarea) {
-                            if (textarea.value.trim()) {
-                                answer.text = textarea.value;
-                            } else {
-                                valid = false;
-                                errorDiv.style.display = 'block';
-                                return;
-                            }
-                        } else if (card.querySelector('input[type="radio"]')) {
-                            valid = false;
-                            errorDiv.style.display = 'block';
-                            return;
+                        } else if (textarea && textarea.value.trim()) {
+                            answer.text = textarea.value;
                         }
 
                         answers.push(answer);
                     });
-
-                    if (!valid) {
-                        showAlert('error', 'Iltimos, barcha savollarga javob bering.');
-                        return;
-                    }
 
                     try {
                         const response = await fetch('{% url 'quizz:submit_quiz' %}', {
@@ -364,20 +446,20 @@
                 function showAlert(type, message) {
                     const alert = document.createElement('div');
                     alert.className = `custom-alert custom-alert-${type}`;
-                    alert.innerHTML = `${message} <button class="btn-close" onclick="this.parentElement.remove()"></button>`;
+                    alert.innerHTML = `${message} <button class="btn-close btn-close-white" onclick="this.parentElement.remove()"></button>`;
                     document.querySelector('.messages-container').appendChild(alert);
                     setTimeout(() => alert.remove(), 7000);
                 }
             </script>
         {% else %}
-            <div class="card" data-aos="zoom-in" style="background: #2a2a2a; border: 2px solid #00adb5;">
+            <div class="card" data-aos="zoom-in" style="background: var(--card-bg); border: 2px solid var(--neon-cyan);">
                 <div class="card-body text-center">
-                    <p class="card-text text-danger">Hozircha savollar topilmadi. 😔</p>
+                    <p class="card-text text-danger">Hozircha savollar topilmadi. Admin bilan bog‘laning. 😔</p>
                 </div>
             </div>
         {% endif %}
     {% else %}
-        <div class="card" data-aos="zoom-in" style="background: #2a2a2a; border: 2px solid #00adb5;">
+        <div class="card" data-aos="zoom-in" style="background: var(--card-bg); border: 2px solid var(--neon-cyan);">
             <div class="card-body text-center">
                 <p class="card-text">
                     {% if not quiz.is_ongoing %}
@@ -386,55 +468,10 @@
                         Siz maksimal urinishlar soniga yetdingiz ({{ quiz.max_attempts }}).
                     {% endif %}
                     <br>
-                    <a href="{% url 'quiz:quiz_leaderboard' quiz.id %}" class="btn btn-auth mt-2">Leaderboard’ni ko‘rish</a>
+                    <a href="{% url 'quizz:quiz_leaderboard' quiz.id %}" class="btn btn-auth mt-2">Leaderboard’ni ko‘rish</a>
                 </p>
             </div>
         </div>
     {% endif %}
 
-    {% if user_submissions %}
-        <h2 class="neon-text mt-5 mb-4">Sizning urinishlaringiz</h2>
-        <div class="table-responsive" data-aos="fade-up">
-            <table class="table table-quiz">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Ball</th>
-                        <th>To‘g‘ri</th>
-                        <th>Xato</th>
-                        <th>Streak</th>
-                        <th>Yulduzlar</th>
-                        <th>Urinish</th>
-                        <th>Vaqt</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for submission in user_submissions %}
-                        <tr data-aos="fade-right">
-                            <td>
-                                {{ forloop.counter }}
-                                {% if submission.id == best_submission.id %}
-                                    <span class="badge badge-best ms-1">Eng yaxshi 🏆</span>
-                                {% endif %}
-                            </td>
-                            <td>{{ submission.total_score }}</td>
-                            <td>{{ submission.correct_answers }}</td>
-                            <td>{{ submission.wrong_answers }}</td>
-                            <td>{{ submission.streak|default:"0" }}</td>
-                            <td class="stars">
-                                {% for i in "123" %}
-                                    {% if forloop.counter <= submission.stars %}
-                                        ⭐
-                                    {% endif %}
-                                {% endfor %}
-                            </td>
-                            <td>{{ submission.attempt_number }}</td>
-                            <td>{{ submission.submitted_at|date:"Y-m-d H:i" }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    {% endif %}
-</div>
 {% endblock %}

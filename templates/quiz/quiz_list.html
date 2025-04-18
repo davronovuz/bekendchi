@@ -126,7 +126,7 @@
                 <div class="card text-center">
                     <div class="card-body">
                         <p class="card-text">Hozircha quizlar yo‘q. 😔</p>
-                        <a href="{% url 'quizz:quiz_list' %}" class="btn btn-auth">Boshqa fanlarni ko‘rish</a>
+                        <a href="{% url 'quizz:quizl' %}" class="btn btn-auth">Boshqa fanlarni ko‘rish</a>
                         {% if user.is_staff %}
                             <a href="{% url 'admin:quizz_quiz_add' %}" class="btn btn-auth">Yangi quiz qo‘shish</a>
                         {% endif %}
