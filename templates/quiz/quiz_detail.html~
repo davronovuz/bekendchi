@@ -384,7 +384,7 @@
                                 origin: { y: 0.6 },
                                 colors: ['#00adb5', '#00d4dd', '#ffd700']
                             });
-                            setTimeout(() => window.location.href = '{% url 'quizz:quiz_leaderboard' quiz.id %}', 5000);
+                            setTimeout(() => window.location.href = '{% url 'quiz:quiz_leaderboard' quiz.id %}', 5000);
                         } else {
                             showAlert('error', `Xato: ${result.error}`);
                         }
