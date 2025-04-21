@@ -79,7 +79,7 @@
 
     <!-- Umumiy statistika -->
     <div class="mb-4" data-aos="fade-up">
-        <p class="text-muted">
+        <p class="text">
             Jami quizlar: <strong>{{ page_obj.paginator.count }}</strong> |
             Tanlangan fan: <strong>{{ selected_subject|default:"Barchasi" }}</strong>
         </p>
@@ -101,15 +101,15 @@
                             {% endif %}
                         </h5>
                         <p class="card-text">
-                            <strong>Fan:</strong> {{ quiz.subject.icon|default:"📚" }} {{ quiz.subject.name }}<br>
-                            <strong>Qiyinlik:</strong> {{ quiz.get_difficulty_display|default:"Noma'lum" }}<br>
-                            <strong>Ishtirokchilar:</strong> {{ quiz.participant_count }}<br>
+                            <strong class="badge badge-completed ms-2">Fan:</strong> {{ quiz.subject.icon|default:"📚" }} {{ quiz.subject.name }}<br>
+                            <strong class="badge badge-completed ms-2">Qiyinlik:</strong> {{ quiz.get_difficulty_display|default:"Noma'lum" }}<br>
+                            <strong class="badge badge-completed ms-2">Ishtirokchilar:</strong> {{ quiz.participant_count }}<br>
                             {{ quiz.description|truncatewords:20 }}
                         </p>
                         <p class="card-text">
-                            <strong>Holati:</strong>
+                            <strong class="badge badge-completed ms-2">Holati:</strong>
                             {% if quiz.is_ongoing %}
-                                <span class="text-success">Faol</span>
+                                <span class="badge badge-completed ms-2">Faol</span>
                             {% else %}
                                 <span class="text-danger">Yakunlangan</span>
                             {% endif %}

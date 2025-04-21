@@ -1,37 +1,124 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{{ quiz.title }} Leaderboard | Bekendchi{% endblock %}
+{% block title %}
+{{ quiz.title }} Leaderboard | Bekendchi
+{% endblock %}
 
 {% block extra_head %}
 <meta name="description" content="{{ quiz.title }} uchun eng yaxshi ishtirokchilar ro‘yxatini ko‘ring!">
 <meta property="og:title" content="{{ quiz.title }} Leaderboard | Bekendchi">
 <meta property="og:description" content="{{ quiz.title }} uchun eng yaxshi ishtirokchilar ro‘yxatini ko‘ring!">
 <style>
+    /* Umumiy container stillari */
+    .container.leaderboard-container {
+        position: relative;
+        z-index: 10;
+    }
+
+    /* Neon text */
     .neon-text {
-        color: #00adb5;
+        color: #00adb5 !important;
         text-shadow: 0 0 5px rgba(0, 173, 181, 0.5);
     }
-    .table-dark tr:hover {
-        background-color: rgba(0, 173, 181, 0.2);
+
+    /* Card stillari */
+    .leaderboard-container .card {
+        background-color: rgba(40, 48, 49, 0.9) !important;
+        border: 1px solid #00adb5 !important;
+        box-shadow: 0 0 10px rgba(0, 173, 181, 0.3);
+        opacity: 1 !important;
+    }
+
+    .leaderboard-container .card-body {
+        background-color: transparent !important;
+    }
+
+    /* Matnlar uchun aniq oq rang */
+    .leaderboard-container .card-text,
+    .leaderboard-container .card-title,
+    .leaderboard-container #userStats,
+    .leaderboard-container #userStats span,
+    .leaderboard-container .text-center {
+        color: #ffffff !important;
+        text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+        font-weight: 500;
+    }
+
+    /* Jadval stillari */
+    .leaderboard-container .table-dark {
+        background-color: rgba(40, 48, 49, 0.9) !important;
+        border: 1px solid #00adb5 !important;
+    }
+
+    .leaderboard-container .table-dark th,
+    .leaderboard-container .table-dark td {
+        color: #ffffff !important;
+        background-color: transparent !important;
+        border-color: #00adb5 !important;
+        text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+        font-weight: 500;
+    }
+
+    .leaderboard-container .table-dark tr:hover {
+        background-color: rgba(0, 173, 181, 0.2) !important;
         transition: all 0.3s ease;
     }
+
+    /* Medal va badge */
     .medal {
         font-size: 1.2rem;
         margin-right: 5px;
     }
+
     .badge-best {
-        background-color: #00adb5;
-        color: white;
+        background-color: #00adb5 !important;
+        color: #ffffff !important;
         font-size: 0.8rem;
         padding: 2px 8px;
         border-radius: 10px;
+        text-shadow: none;
+    }
+
+    /* Form elementlari */
+    .leaderboard-container .form-label {
+        color: #ffffff !important;
+        text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+    }
+
+    .leaderboard-container .form-select {
+        background-color: rgba(40, 48, 49, 0.9) !important;
+        color: #ffffff !important;
+        border: 1px solid #00adb5 !important;
+    }
+
+    .leaderboard-container .form-select:focus {
+        border-color: #00adb5 !important;
+        box-shadow: 0 0 10px rgba(0, 173, 181, 0.5) !important;
+    }
+
+    /* Pagination tugmalari */
+    .leaderboard-container .btn-auth {
+        color: #ffffff !important;
+        border: 1px solid #00adb5 !important;
+        background-color: rgba(40, 48, 49, 0.9) !important;
+    }
+
+    .leaderboard-container .btn-auth:hover {
+        background-color: #00adb5 !important;
+        color: #121212 !important;
+    }
+
+    .leaderboard-container .page-item.active .page-link {
+        background-color: #00adb5 !important;
+        color: #121212 !important;
+        border-color: #00adb5 !important;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container mt-5" data-aos="fade-up">
+<div class="container mt-5 leaderboard-container" data-aos="fade-up">
     <h1 class="neon-text mb-4">{{ quiz.title }} Leaderboard</h1>
     <div class="card mb-4" data-aos="zoom-in">
         {% if quiz.cover_image %}
@@ -39,12 +126,29 @@
         {% endif %}
         <div class="card-body">
             <p class="card-text"><strong>Fan:</strong> {{ quiz.subject.icon|default:"📚" }} {{ quiz.subject.name }}</p>
-            <p class="card-text"><strong>Jami ishtirokchilar:</strong> {{ total_participants }}</p>
+            <p class="card-text"><strong class="text-white">Jami ishtirokchilar:</strong> <stron class="text-white">{{ total_participants }}</stron></p>
             <p class="card-text"><strong>O‘rtacha ball:</strong> {{ avg_score }}</p>
             <p class="card-text"><strong>Eng yuqori streak:</strong> {{ max_streak }}</p>
             {% if user_position %}
                 <p class="card-text"><strong>Sizning o‘rningiz:</strong> {{ user_position }}-o‘rin 🏆</p>
             {% endif %}
+        </div>
+    </div>
+
+    <!-- User Stats -->
+    <div class="card mb-4" data-aos="zoom-in">
+        <div class="card-body">
+            <h5 class="card-title">Sizning Natijangiz</h5>
+            <div id="userStats">
+                <p class="card-text">
+                    <strong>Javob berilgan savollar:</strong> <span id="answeredQuestions"></span> / <span id="totalQuestions"></span><br>
+                    <strong>To‘g‘ri javoblar:</strong> <span id="correctAnswers"></span><br>
+                    <strong>Xato javoblar:</strong> <span id="wrongAnswers"></span><br>
+                    <strong>Umumiy ball:</strong> <span id="totalScore"></span><br>
+                    <strong>Streak:</strong> <span id="streak"></span><br>
+                    <strong>Yulduzlar:</strong> <span id="stars"></span>
+                </p>
+            </div>
         </div>
     </div>
 
@@ -73,7 +177,6 @@
                     <th scope="col">Xato</th>
                     <th scope="col">Streak</th>
                     <th scope="col">Yulduzlar</th>
-                    <th scope="col">Nishonlar</th>
                     <th scope="col">Urinish</th>
                     <th scope="col">Vaqt</th>
                 </tr>
@@ -107,13 +210,12 @@
                                 {% endif %}
                             {% endfor %}
                         </td>
-
                         <td>{{ submission.attempt_number }}</td>
                         <td>{{ submission.submitted_at|date:"Y-m-d H:i" }}</td>
                     </tr>
                 {% empty %}
                     <tr>
-                        <td colspan="10" class="text-center" data-aos="fade-up">
+                        <td colspan="9" class="text-center" data-aos="fade-up">
                             Hozircha ishtirokchilar yo‘q. 😔
                             <br>
                             <a href="{% url 'quizz:quiz_detail' quiz.id %}" class="btn btn-auth mt-2">Quiz’da qatnashish</a>
@@ -156,4 +258,27 @@
         </nav>
     {% endif %}
 </div>
+
+<!-- JavaScript for Displaying Stats -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const quizResult = JSON.parse(localStorage.getItem('quizResult'));
+    if (quizResult) {
+      document.getElementById('answeredQuestions').textContent = quizResult.answered_questions;
+      document.getElementById('totalQuestions').textContent = quizResult.total_questions;
+      document.getElementById('correctAnswers').textContent = quizResult.correct_answers;
+      document.getElementById('wrongAnswers').textContent = quizResult.wrong_answers;
+      document.getElementById('totalScore').textContent = quizResult.total_score;
+      document.getElementById('streak').textContent = quizResult.streak;
+      const starsElement = document.getElementById('stars');
+      for (let i = 0; i < quizResult.stars; i++) {
+        starsElement.innerHTML += '⭐';
+      }
+      // Ma'lumotni ko‘rsatgandan so‘ng localStorage’dan o‘chirib tashlaymiz
+      localStorage.removeItem('quizResult');
+    } else {
+      document.getElementById('userStats').innerHTML = '<p class="card-text">Hozircha natijalar yo‘q.</p>';
+    }
+  });
+</script>
 {% endblock %}
