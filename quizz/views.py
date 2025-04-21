@@ -286,3 +286,36 @@ def submit_quiz(request):
             response_data['confetti'] = True
 
         return JsonResponse(response_data, status=200)
+
+
+@login_required(login_url='ln')
+@csrf_exempt
+def check_answer(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Faqat POST so‘rovlar qabul qilinadi'}, status=400)
+
+    try:
+        data = json.loads(request.body)
+        question_id = data.get('question_id')
+        choice_id = data.get('choice_id')
+        text = data.get('text')
+    except (json.JSONDecodeError, KeyError):
+        return JsonResponse({'error': 'Noto‘g‘ri JSON formati'}, status=400)
+
+    question = get_object_or_404(Question, id=question_id)
+    is_correct = False
+
+    if question.question_type == 'MC' and choice_id:
+        choice = get_object_or_404(Choice, id=choice_id, question=question)
+        is_correct = choice.is_correct
+    elif question.question_type == 'SA' and text:
+        correct_answer = question.choices.filter(is_correct=True).first()
+        if correct_answer:
+            pattern = re.compile(rf'\b{re.escape(correct_answer.text.lower())}\b', re.IGNORECASE)
+            is_correct = bool(pattern.search(text.lower()))
+    elif question.question_type == 'CD' and text:
+        correct_answer = question.choices.filter(is_correct=True).first()
+        if correct_answer:
+            is_correct = text.strip() == correct_answer.text.strip()
+
+    return JsonResponse({'is_correct': is_correct})

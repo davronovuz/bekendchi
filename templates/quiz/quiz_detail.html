@@ -5,121 +5,19 @@
 {{ quiz.title }} - Test | Bekendchi
 {% endblock %}
 
-{% block content %}
-<div class="container mt-4" data-aos="fade-up">
-  <!-- Quiz Header -->
-  <div class="card mb-4">
-    <div class="card-body">
-      <h2 class="card-title neon-text">{{ quiz.title }}</h2>
-      <p class="card-text text-muted">
-        <strong class="text-white">Fan:</strong> {{ quiz.subject.name }} |
-        <strong class="text-white">Qiyinlik:</strong> {{ quiz.get_difficulty_display }} |
-        <strong>Savollar soni:</strong> {{ questions.count }} |
-        <strong>Davomiylik:</strong>
-        {% if quiz.duration %}
-          {{ quiz.duration|time:"H:i:s" }}
-        {% else %}
-          Cheklanmagan
-        {% endif %}
-      </p>
-      {% if quiz.description %}
-        <p class="card-text">{{ quiz.description }}</p>
-      {% endif %}
-      {% if leaderboard_position %}
-        <p class="card-text text-success">
-          <strong>Leaderboard’dagi o‘rningiz:</strong> {{ leaderboard_position }}
-        </p>
-      {% endif %}
-    </div>
-  </div>
-
-  <!-- Quiz Form -->
-  {% if can_attempt %}
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">Testni Boshlash</h5>
-        <form id="quizForm" method="post" action="{% url 'quizz:submit_quiz' %}">
-          {% csrf_token %}
-          <input type="hidden" name="quiz_id" value="{{ quiz.id }}">
-
-          <!-- Question Navigation -->
-          <div class="d-flex justify-content-between align-items-center mb-4">
-            <h6 class="mb-0">Savol <span id="currentQuestion">1</span>-{{ questions.count }}</h6>
-            <div>
-              {% for question in questions %}
-                <button type="button" class="btn btn-outline-light btn-sm rounded-circle mx-1 question-nav {% if forloop.first %}active{% endif %}" data-question="{{ forloop.counter }}">{{ forloop.counter }}</button>
-              {% endfor %}
-            </div>
-          </div>
-
-          <!-- Questions -->
-          {% for question in questions %}
-            <div class="question-block {% if not forloop.first %}d-none{% endif %}" data-question="{{ forloop.counter }}" data-time-limit="{{ question.time_limit }}">
-              <div class="card mb-3">
-                <div class="card-body">
-                  <h6 class="card-title">
-                    {{ forloop.counter }}-Savol: {{ question.text }}
-                    <span class="float-end badge bg-info">{{ question.points }} ball</span>
-                  </h6>
-                  <p class="text-muted">Qolgan vaqt: <span class="timer" id="timer-{{ forloop.counter }}">{{ question.time_limit }}</span> sekund</p>
-
-                  <!-- Multiple Choice -->
-                  {% if question.question_type == 'MC' %}
-                    {% for choice in question.choices.all %}
-                      <div class="form-check mb-2">
-                        <input class="form-check-input answer-input" type="radio" name="answers[{{ forloop.parentloop.counter0 }}][choice_id]" id="choice_{{ choice.id }}" value="{{ choice.id }}" required>
-                        <label class="form-check-label" for="choice_{{ choice.id }}">{{ choice.text }}</label>
-                      </div>
-                    {% endfor %}
-                    <input type="hidden" name="answers[{{ forloop.counter0 }}][question_id]" value="{{ question.id }}">
-
-                  <!-- Short Answer -->
-                  {% elif question.question_type == 'SA' %}
-                    <div class="mb-3">
-                      <textarea class="form-control answer-input" name="answers[{{ forloop.counter0 }}][text]" rows="3" placeholder="Javobingizni kiriting..." required></textarea>
-                    </div>
-                    <input type="hidden" name="answers[{{ forloop.counter0 }}][question_id]" value="{{ question.id }}">
-
-                  <!-- Coding -->
-                  {% elif question.question_type == 'CD' %}
-                    <div class="mb-3">
-                      <textarea class="form-control answer-input" name="answers[{{ forloop.counter0 }}][text]" rows="5" placeholder="Kodingizni kiriting..." required></textarea>
-                    </div>
-                    <input type="hidden" name="answers[{{ forloop.counter0 }}][question_id]" value="{{ question.id }}">
-                  {% endif %}
-                </div>
-              </div>
-            </div>
-          {% endfor %}
-
-          <!-- Navigation Buttons -->
-          <div class="d-flex justify-content-between">
-            <button type="button" class="btn btn-outline-light" id="prevBtn" disabled>Orqaga</button>
-            <button type="button" class="btn btn-primary" id="nextBtn">Keyingisi</button>
-            <button type="submit" class="btn btn-success d-none" id="submitBtn">Testni Yakunlash</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  {% else %}
-    <div class="card text-center">
-      <div class="card-body">
-        <h5 class="card-title">Testni Boshlash Imkonsiz</h5>
-        <p class="card-text">
-          {% if not quiz.is_ongoing %}
-            Bu test yakunlangan yoki hali boshlanmagan.
-          {% else %}
-            Siz maksimal urinishlar soniga yetdingiz ({{ quiz.max_attempts }}).
-          {% endif %}
-        </p>
-        <a href="{% url 'quizz:quizl' %}" class="btn btn-outline-light">Boshqa Testlarni Ko‘rish</a>
-      </div>
-    </div>
-  {% endif %}
-</div>
-
-<!-- Custom Styles -->
+{% block extra_head %}
+<meta name="description" content="{{ quiz.description|truncatewords:20 }}">
+<meta property="og:title" content="{{ quiz.title }} - Test | Bekendchi">
+<meta property="og:description" content="{{ quiz.description|truncatewords:20 }}">
+<meta property="og:image" content="{{ quiz.cover_image|default:'/static/images/default_quiz.jpg' }}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/js-confetti@0.11.0/dist/js-confetti.browser.min.css">
 <style>
+  .quiz-header {
+    background: linear-gradient(145deg, rgba(0, 173, 181, 0.2), rgba(18, 18, 18, 0.8));
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(0, 173, 181, 0.5);
+  }
   .question-nav {
     width: 40px;
     height: 40px;
@@ -129,17 +27,33 @@
     border: 2px solid #00adb5;
     color: #00adb5;
     transition: all 0.3s ease;
+    position: relative;
   }
   .question-nav:hover, .question-nav.active {
     background-color: #00adb5;
     color: #121212;
     box-shadow: 0 0 10px rgba(0, 173, 181, 0.5);
   }
+  .question-nav.correct::after {
+    content: '✅';
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    font-size: 1rem;
+  }
+  .question-nav.incorrect::after {
+    content: '❌';
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    font-size: 1rem;
+  }
   .question-block {
-    display: none; /* Dastlab yashiriladi */
+    display: none;
+    animation: fadeIn 0.5s ease-in;
   }
   .question-block.active {
-    display: block; /* Faqat joriy savol ko‘rinadi */
+    display: block;
   }
   .form-check-input:checked {
     background-color: #00adb5;
@@ -154,187 +68,478 @@
     border-color: #00adb5;
     box-shadow: 0 0 10px rgba(0, 173, 181, 0.5);
   }
-  .form-check-label, .card-title, .card-text, .text-muted {
-    color: #ffffff !important; /* Matnlar aniq oq rangda bo‘ladi */
-  }
   .timer {
-    color: #ff4d4d; /* Taymer qizil rangda bo‘ladi */
+    color: #ff4d4d;
     font-weight: bold;
+    font-family: 'Orbitron', sans-serif;
   }
-  .btn-primary, .btn-success {
-    background-color: #00adb5;
+  .timer.warning {
+    animation: pulseRed 0.5s infinite;
+  }
+  .neon-btn {
+    background: #00adb5;
+    color: #121212;
     border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
     transition: all 0.3s ease;
   }
-  .btn-primary:hover, .btn-success:hover {
-    background-color: #008c93;
-    box-shadow: 0 0 15px rgba(0, 173, 181, 0.5);
+  .neon-btn:hover {
+    background: #ffffff;
+    color: #00adb5;
+    box-shadow: 0 0 15px rgba(0, 173, 181, 0.8);
+  }
+  .progress-bar {
+    background: linear-gradient(90deg, #00adb5, #4d79ff);
+    transition: width 0.5s ease;
   }
   .answer-input:disabled {
     background-color: #555;
     cursor: not-allowed;
   }
+  .correct-answer {
+    animation: pulseGreen 0.5s ease;
+    border: 2px solid #28a745 !important;
+  }
+  .incorrect-answer {
+    animation: shake 0.5s ease;
+    border: 2px solid #dc3545 !important;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulseGreen {
+    0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+  }
+  @keyframes pulseRed {
+    0% { text-shadow: 0 0 5px #ff4d4d; }
+    50% { text-shadow: 0 0 10px #ff4d4d; }
+    100% { text-shadow: 0 0 5px #ff4d4d; }
+  }
 </style>
+{% endblock %}
 
-<!-- JavaScript for Navigation and Timer -->
+{% block content %}
+<div class="container mt-5" data-aos="fade-up">
+  <!-- Quiz Header -->
+  <div class="quiz-header mb-4">
+    <div class="row align-items-center">
+      <div class="col-md-3">
+        {% if quiz.cover_image %}
+          <img src="{{ quiz.cover_image }}" class="img-fluid rounded" alt="{{ quiz.title }} tasviri" style="max-height: 150px; object-fit: cover;">
+        {% else %}
+          <div class="bg-dark text-center p-4 rounded" style="min-height: 150px;">
+            <i class="bi bi-question-circle-fill neon-text" style="font-size: 3rem;"></i>
+          </div>
+        {% endif %}
+      </div>
+      <div class="col-md-9">
+        <h2 class="neon-text">{{ quiz.title }}</h2>
+        <p class="text-white">
+          <strong>Fan:</strong> {{ quiz.subject.icon|default:"📚" }} {{ quiz.subject.name }}<br>
+          <strong>Qiyinlik:</strong> {{ quiz.get_difficulty_display }}<br>
+          <strong>Savollar soni:</strong> {{ questions.count }}<br>
+          <strong>Davomiylik:</strong> {% if quiz.duration %}{{ quiz.duration|time:"H:i:s" }}{% else %}Cheklanmagan{% endif %}
+        </p>
+        {% if quiz.description %}
+          <p class="text-white">{{ quiz.description }}</p>
+        {% endif %}
+        {% if leaderboard_position %}
+          <p class="text-success"><strong>Leaderboard’dagi o‘rningiz:</strong> {{ leaderboard_position }}</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Quiz Form -->
+  {% if can_attempt %}
+    <div class="card" data-aos="zoom-in">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h5 class="neon-text">Savol <span id="currentQuestion">1</span> / {{ questions.count }}</h5>
+          <div class="progress" style="width: 50%; height: 20px;">
+            <div class="progress-bar" id="progressBar" role="progressbar" style="width: {% widthratio 1 questions.count 100 %}%;" aria-valuenow="1" aria-valuemin="1" aria-valuemax="{{ questions.count }}">{% widthratio 1 questions.count 100 %}%</div>
+          </div>
+        </div>
+        <form id="quizForm" method="post" action="{% url 'quizz:submit_quiz' %}">
+          {% csrf_token %}
+          <input type="hidden" name="quiz_id" value="{{ quiz.id }}">
+
+          <!-- Question Navigation -->
+          <div class="d-flex justify-content-center flex-wrap mb-4">
+            {% for question in questions %}
+              <button type="button" class="btn question-nav {% if forloop.first %}active{% endif %}" data-question="{{ forloop.counter }}">{{ forloop.counter }}</button>
+            {% endfor %}
+          </div>
+
+          <!-- Questions -->
+          {% for question in questions %}
+            <div class="question-block {% if not forloop.first %}d-none{% else %}active{% endif %}" data-question="{{ forloop.counter }}" data-time-limit="{{ question.time_limit }}">
+              <div class="card mb-3">
+                <div class="card-body">
+                  <h6 class="card-title neon-text">
+                    {{ forloop.counter }}-Savol: {{ question.text }}
+                    <span class="float-end badge bg-info">{{ question.points }} ball</span>
+                  </h6>
+                  <p class="text-white">Qolgan vaqt: <span class="timer" id="timer-{{ forloop.counter }}">{{ question.time_limit }}</span> sekund</p>
+
+                  <!-- Multiple Choice -->
+                  {% if question.question_type == 'MC' %}
+                    {% for choice in question.choices.all %}
+                      <div class="form-check mb-2">
+                        <input class="form-check-input answer-input" type="radio" name="answers[{{ forloop.parentloop.counter0 }}][choice_id]" id="choice_{{ choice.id }}" value="{{ choice.id }}" required>
+                        <label class="form-check-label text-white" for="choice_{{ choice.id }}">{{ choice.text }}</label>
+                      </div>
+                    {% endfor %}
+                    <input type="hidden" name="answers[{{ forloop.parentloop.counter0 }}][question_id]" value="{{ question.id }}">
+
+                  <!-- Short Answer -->
+                  {% elif question.question_type == 'SA' %}
+                    <div class="mb-3">
+                      <textarea class="form-control answer-input" name="answers[{{ forloop.parentloop.counter0 }}][text]" rows="3" placeholder="Javobingizni kiriting..." required></textarea>
+                    </div>
+                    <input type="hidden" name="answers[{{ forloop.parentloop.counter0 }}][question_id]" value="{{ question.id }}">
+
+                  <!-- Coding -->
+                  {% elif question.question_type == 'CD' %}
+                    <div class="mb-3">
+                      <textarea class="form-control answer-input" name="answers[{{ forloop.parentloop.counter0 }}][text]" rows="5" placeholder="Kodingizni kiriting..." required></textarea>
+                    </div>
+                    <input type="hidden" name="answers[{{ forloop.parentloop.counter0 }}][question_id]" value="{{ question.id }}">
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+
+          <!-- Navigation Buttons -->
+          <div class="d-flex justify-content-between">
+            <button type="button" class="neon-btn" id="prevBtn" disabled>Orqaga</button>
+            <button type="button" class="neon-btn" id="nextBtn">Keyingisi</button>
+            <button type="submit" class="neon-btn d-none" id="submitBtn">Testni Yakunlash</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  {% else %}
+    <div class="card text-center" data-aos="fade-up">
+      <div class="card-body">
+        <h5 class="neon-text">Testni Boshlash Imkonsiz</h5>
+        <p class="text-white">
+          {% if not quiz.is_ongoing %}
+            Bu test yakunlangan yoki hali boshlanmagan.
+          {% else %}
+            Siz maksimal urinishlar soniga yetdingiz ({{ quiz.max_attempts }}).
+          {% endif %}
+        </p>
+        <a href="{% url 'quizz:quizl' %}" class="neon-btn">Boshqa Testlarni Ko‘rish</a>
+      </div>
+    </div>
+  {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/js-confetti@0.11.0/dist/js-confetti.browser.min.js"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const questions = document.querySelectorAll('.question-block');
-    const navButtons = document.querySelectorAll('.question-nav');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const submitBtn = document.getElementById('submitBtn');
-    const currentQuestionSpan = document.getElementById('currentQuestion');
-    const quizForm = document.getElementById('quizForm');
-    let currentQuestion = 1;
-    let timerInterval = null;
+document.addEventListener('DOMContentLoaded', () => {
+  const questions = document.querySelectorAll('.question-block');
+  const navButtons = document.querySelectorAll('.question-nav');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const submitBtn = document.getElementById('submitBtn');
+  const currentQuestionSpan = document.getElementById('currentQuestion');
+  const progressBar = document.getElementById('progressBar');
+  const quizForm = document.getElementById('quizForm');
+  const confetti = new JSConfetti();
+  let currentQuestion = 1;
+  let timerInterval = null;
 
-    function startTimer() {
-      const current = document.querySelector(`.question-block[data-question="${currentQuestion}"]`);
-      const timeLimit = parseInt(current.getAttribute('data-time-limit'));
-      const timerElement = document.getElementById(`timer-${currentQuestion}`);
-      let timeLeft = timeLimit;
+  function startTimer() {
+    const current = document.querySelector(`.question-block[data-question="${currentQuestion}"]`);
+    const timeLimit = parseInt(current.getAttribute('data-time-limit')) || 30;
+    const timerElement = document.getElementById(`timer-${currentQuestion}`);
+    let timeLeft = timeLimit;
 
-      // Oldingi taymerni to‘xtatamiz
-      if (timerInterval) {
-        clearInterval(timerInterval);
-      }
-
-      timerInterval = setInterval(() => {
-        timeLeft--;
-        timerElement.textContent = timeLeft;
-
-        if (timeLeft <= 0) {
-          clearInterval(timerInterval);
-          // Inputlarni o‘chirib qo‘yamiz
-          const inputs = current.querySelectorAll('.answer-input');
-          inputs.forEach(input => {
-            input.disabled = true;
-          });
-
-          // Agar oxirgi savol bo‘lsa, formani yuboramiz, aks holda keyingi savolga o‘tamiz
-          if (currentQuestion === questions.length) {
-            quizForm.dispatchEvent(new Event('submit', { cancelable: true }));
-          } else {
-            currentQuestion++;
-            updateQuestion();
-          }
-        }
-      }, 1000);
+    if (timerInterval) {
+      clearInterval(timerInterval);
     }
 
-    function updateQuestion() {
-      questions.forEach(q => q.classList.remove('active'));
-      navButtons.forEach(btn => btn.classList.remove('active'));
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      timerElement.textContent = timeLeft;
+      if (timeLeft <= 10) {
+        timerElement.classList.add('warning');
+      } else {
+        timerElement.classList.remove('warning');
+      }
 
-      const current = document.querySelector(`.question-block[data-question="${currentQuestion}"]`);
-      const currentNav = document.querySelector(`.question-nav[data-question="${currentQuestion}"]`);
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        current.querySelectorAll('.answer-input').forEach(input => input.disabled = true);
+        if (currentQuestion === questions.length) {
+          quizForm.dispatchEvent(new Event('submit', { cancelable: true }));
+        } else {
+          currentQuestion++;
+          updateQuestion();
+        }
+      }
+    }, 1000);
+  }
+
+  function updateQuestion() {
+    console.log(`Updating to question ${currentQuestion}`); // Debug
+    questions.forEach(q => q.classList.remove('active'));
+    navButtons.forEach(btn => btn.classList.remove('active'));
+
+    const current = document.querySelector(`.question-block[data-question="${currentQuestion}"]`);
+    const currentNav = document.querySelector(`.question-nav[data-question="${currentQuestion}"]`);
+    if (current && currentNav) {
       current.classList.add('active');
       currentNav.classList.add('active');
       currentQuestionSpan.textContent = currentQuestion;
 
+      const progress = (currentQuestion / questions.length) * 100;
+      progressBar.style.width = `${progress}%`;
+      progressBar.textContent = `${Math.round(progress)}%`;
+      progressBar.setAttribute('aria-valuenow', currentQuestion);
+
       prevBtn.disabled = currentQuestion === 1;
-      if (currentQuestion === questions.length) {
-        nextBtn.classList.add('d-none');
-        submitBtn.classList.remove('d-none');
-      } else {
-        nextBtn.classList.remove('d-none');
-        submitBtn.classList.add('d-none');
-      }
+      nextBtn.classList.toggle('d-none', currentQuestion === questions.length);
+      submitBtn.classList.toggle('d-none', currentQuestion !== questions.length);
 
-      // Taymerni yangi savol uchun boshlaymiz
       startTimer();
+    } else {
+      console.error(`Savol yoki navigatsiya tugmasi topilmadi: ${currentQuestion}`);
     }
+  }
 
-    // Birinchi savolni ko‘rsatish va taymerni boshlash
-    updateQuestion();
-
-    prevBtn.addEventListener('click', () => {
-      if (currentQuestion > 1) {
-        currentQuestion--;
-        updateQuestion();
-      }
-    });
-
-    nextBtn.addEventListener('click', () => {
-      if (currentQuestion < questions.length) {
-        currentQuestion++;
-        updateQuestion();
-      }
-    });
-
-    navButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        currentQuestion = parseInt(btn.getAttribute('data-question'));
-        updateQuestion();
+  async function checkAnswer(questionId, choiceId, text) {
+    try {
+      const response = await fetch('{% url "quizz:check_answer" %}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({ question_id: questionId, choice_id: choiceId, text })
       });
-    });
+      const result = await response.json();
+      return result.is_correct;
+    } catch (error) {
+      console.error('Javob tekshirishda xato:', error);
+      return null;
+    }
+  }
 
-    // Form Submission
-    quizForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      // Taymerni to‘xtatamiz
-      if (timerInterval) {
-        clearInterval(timerInterval);
-      }
+  updateQuestion();
 
-      const formData = new FormData(quizForm);
-      const data = {
-        quiz_id: formData.get('quiz_id'),
-        answers: []
-      };
+  prevBtn.addEventListener('click', () => {
+    if (currentQuestion > 1) {
+      currentQuestion--;
+      updateQuestion();
+    }
+  });
 
-      let answeredQuestions = 0;
-      questions.forEach((q, index) => {
-        const questionId = q.querySelector('input[name$="[question_id]"]').value;
-        const answer = {
-          question_id: questionId
-        };
-        const choice = formData.get(`answers[${index}][choice_id]`);
-        const text = formData.get(`answers[${index}][text]`);
-        if (choice || text) {
-          answeredQuestions++;
+  nextBtn.addEventListener('click', async () => {
+    if (currentQuestion < questions.length) {
+      const current = document.querySelector(`.question-block[data-question="${currentQuestion}"]`);
+      const inputs = current.querySelectorAll('.answer-input');
+      let answered = false;
+      let choiceId = null;
+      let text = null;
+
+      inputs.forEach(input => {
+        if (input.type === 'radio' && input.checked) {
+          answered = true;
+          choiceId = parseInt(input.value);
         }
-        if (choice) answer.choice_id = choice;
-        if (text) answer.text = text;
-        data.answers.push(answer);
+        if (input.type === 'textarea' && input.value.trim()) {
+          answered = true;
+          text = input.value.trim();
+        }
       });
 
-      try {
-        const response = await fetch(quizForm.action, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': formData.get('csrfmiddlewaretoken')
-          },
-          body: JSON.stringify(data)
+      if (!answered) {
+        alert('Iltimos, javobni tanlang yoki kiriting!');
+        return;
+      }
+
+      const questionId = parseInt(current.querySelector('input[name$="[question_id]"]').value);
+      const isCorrect = await checkAnswer(questionId, choiceId, text);
+      const currentNav = document.querySelector(`.question-nav[data-question="${currentQuestion}"]`);
+
+      if (isCorrect !== null) {
+        currentNav.classList.add(isCorrect ? 'correct' : 'incorrect');
+        inputs.forEach(input => {
+          input.classList.add(isCorrect ? 'correct-answer' : 'incorrect-answer');
+          input.disabled = true;
         });
-
-        if (!response.ok) {
-          throw new Error(`HTTP xatolik! Status: ${response.status}`);
+        if (isCorrect) {
+          confetti.addConfetti({
+            emojis: ['✅', '🎉'],
+            confettiRadius: 4,
+            confettiNumber: 50
+          });
         }
-
-        const result = await response.json();
-        if (result.status === 'success') {
-          // Leaderboard sahifasiga o‘tishdan oldin statistikani saqlab qo‘yamiz
-          localStorage.setItem('quizResult', JSON.stringify({
-            answered_questions: answeredQuestions,
-            total_questions: questions.length,
-            correct_answers: result.correct_answers,
-            wrong_answers: result.wrong_answers,
-            total_score: result.total_score,
-            streak: result.streak,
-            stars: result.stars
-          }));
-          window.location.href = `{% url 'quizz:quiz_leaderboard' quiz.id %}?submission_id=${result.submission_id}`;
-        } else {
-          alert(result.error || 'Xatolik yuz berdi.');
-        }
-      } catch (error) {
-        console.error('Submit error:', error);
-        alert('Server bilan bog‘lanishda xatolik: ' + error.message);
       }
+
+      currentQuestion++;
+      updateQuestion();
+    }
+  });
+
+  navButtons.forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const newQuestion = parseInt(btn.getAttribute('data-question'));
+      if (newQuestion === currentQuestion) return;
+
+      const current = document.querySelector(`.question-block[data-question="${currentQuestion}"]`);
+      const inputs = current.querySelectorAll('.answer-input');
+      let answered = false;
+      let choiceId = null;
+      let text = null;
+
+      inputs.forEach(input => {
+        if (input.type === 'radio' && input.checked) {
+          answered = true;
+          choiceId = parseInt(input.value);
+        }
+        if (input.type === 'textarea' && input.value.trim()) {
+          answered = true;
+          text = input.value.trim();
+        }
+      });
+
+      if (answered && newQuestion > currentQuestion) {
+        const questionId = parseInt(current.querySelector('input[name$="[question_id]"]').value);
+        const isCorrect = await checkAnswer(questionId, choiceId, text);
+        const currentNav = document.querySelector(`.question-nav[data-question="${currentQuestion}"]`);
+
+        if (isCorrect !== null) {
+          currentNav.classList.add(isCorrect ? 'correct' : 'incorrect');
+          inputs.forEach(input => {
+            input.classList.add(isCorrect ? 'correct-answer' : 'incorrect-answer');
+            input.disabled = true;
+          });
+          if (isCorrect) {
+            confetti.addConfetti({
+              emojis: ['✅', '🎉'],
+              confettiRadius: 4,
+              confettiNumber: 50
+            });
+          }
+        }
+      } else if (!answered && newQuestion > currentQuestion) {
+        alert('Iltimos, joriy savolga javob bering!');
+        return;
+      }
+
+      currentQuestion = newQuestion;
+      updateQuestion();
     });
   });
+
+  quizForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (timerInterval) {
+      clearInterval(timerInterval);
+    }
+
+    const formData = new FormData(quizForm);
+    const data = {
+      quiz_id: parseInt(formData.get('quiz_id')),
+      answers: []
+    };
+
+    questions.forEach((q, index) => {
+      const questionId = parseInt(q.querySelector('input[name$="[question_id]"]').value);
+      const answer = { question_id: questionId };
+      const choice = formData.get(`answers[${index}][choice_id]`);
+      const text = formData.get(`answers[${index}][text]`);
+      if (choice) answer.choice_id = parseInt(choice);
+      if (text) answer.text = text;
+      data.answers.push(answer);
+    });
+
+    try {
+      const response = await fetch(quizForm.action, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+        },
+        body: JSON.stringify(data)
+      });
+
+      const result = await response.json();
+      if (result.status === 'success') {
+        if (result.confetti) {
+          confetti.addConfetti({
+            emojis: ['🎉', '⭐'],
+            confettiRadius: 6,
+            confettiNumber: 200
+          });
+        }
+        localStorage.setItem('quizResult', JSON.stringify({
+          answered_questions: data.answers.filter(a => a.choice_id || a.text).length,
+          total_questions: questions.length,
+          correct_answers: result.correct_answers,
+          wrong_answers: result.wrong_answers,
+          total_score: result.total_score,
+          streak: result.streak,
+          stars: result.stars
+        }));
+        alert(result.message);
+        window.location.href = `{% url 'quizz:quiz_leaderboard' quiz.id %}?submission_id=${result.submission_id}`;
+      } else {
+        alert(result.error || 'Xatolik yuz berdi.');
+      }
+    } catch (error) {
+      console.error('Submit error:', error);
+      alert('Server bilan bog‘lanishda xatolik: ' + error.message);
+    }
+  });
+
+  // Javob tanlashda real vaqt tekshiruvi
+  questions.forEach(q => {
+    const inputs = q.querySelectorAll('.answer-input');
+    inputs.forEach(input => {
+      input.addEventListener('change', async () => {
+        const questionId = parseInt(q.querySelector('input[name$="[question_id]"]').value);
+        let choiceId = null;
+        let text = null;
+        if (input.type === 'radio' && input.checked) {
+          choiceId = parseInt(input.value);
+        } else if (input.type === 'textarea' && input.value.trim()) {
+          text = input.value.trim();
+        }
+        const isCorrect = await checkAnswer(questionId, choiceId, text);
+        const currentNav = document.querySelector(`.question-nav[data-question="${currentQuestion}"]`);
+
+        if (isCorrect !== null) {
+          currentNav.classList.add(isCorrect ? 'correct' : 'incorrect');
+          inputs.forEach(i => {
+            i.classList.add(isCorrect ? 'correct-answer' : 'incorrect-answer');
+            i.disabled = true;
+          });
+          if (isCorrect) {
+            confetti.addConfetti({
+              emojis: ['✅', '🎉'],
+              confettiRadius: 4,
+              confettiNumber: 50
+            });
+          }
+        }
+      });
+    });
+  });
+});
 </script>
 {% endblock %}
