@@ -8,6 +8,7 @@ import json
 import re
 from .models import Quiz, Question, Choice, QuizSubmission, Answer, QuizSettings, Leaderboard, Badge
 
+
 @login_required(login_url='ln')
 @csrf_exempt
 def submit_quiz(request):
@@ -17,7 +18,7 @@ def submit_quiz(request):
     try:
         data = json.loads(request.body)
         quiz_id = data.get('quiz_id')
-        answers = data.get('answers')  # List: [{question_id, choice_id, text}]
+        answers = data.get('answers', [])  # List: [{question_id, choice_id, text}]
     except (json.JSONDecodeError, KeyError):
         return JsonResponse({'error': 'Noto‘g‘ri JSON formati'}, status=400)
 
@@ -30,8 +31,11 @@ def submit_quiz(request):
     if user_attempts >= quiz.max_attempts:
         return JsonResponse({'error': 'Urinishlar soni chegarasidan oshdi'}, status=403)
 
-    # Sozlamalarni olish
+    # Sozlamalarni olish va tekshirish
     settings = QuizSettings.objects.first() or QuizSettings()
+    points_per_correct = settings.points_per_correct if settings.points_per_correct > 0 else 1
+    streak_bonus = settings.streak_bonus if settings.streak_bonus >= 0 else 0
+    max_streak = settings.max_streak if settings.max_streak > 0 else 5
 
     with transaction.atomic():
         # Yangi submission yaratish
@@ -47,17 +51,23 @@ def submit_quiz(request):
         streak = 0
         current_streak = 0
 
+        # Savollarni bir so‘rovda olish
+        question_ids = [answer_data.get('question_id') for answer_data in answers if answer_data.get('question_id')]
+        questions = Question.objects.filter(id__in=question_ids, quiz=quiz).in_bulk()
+
         for answer_data in answers:
             question_id = answer_data.get('question_id')
             choice_id = answer_data.get('choice_id')
-            text_answer = answer_data.get('text')
+            text_answer = answer_data.get('text', '').strip()
 
-            # Savol quiz’ga tegishli ekanligini tekshirish
-            question = get_object_or_404(Question, id=question_id, quiz=quiz)
+            if not question_id or question_id not in questions:
+                continue
+
+            question = questions[question_id]
             answer = Answer.objects.create(
                 submission=submission,
                 question=question,
-                text_answer=text_answer
+                text_answer=text_answer if text_answer else None
             )
 
             is_correct = False
@@ -65,28 +75,38 @@ def submit_quiz(request):
 
             if question.question_type == 'MC':
                 if choice_id:
-                    choice = get_object_or_404(Choice, id=choice_id, question=question)
-                    answer.selected_choice = choice
-                    is_correct = choice.is_correct
+                    try:
+                        choice = Choice.objects.get(id=choice_id, question=question)
+                        answer.selected_choice = choice
+                        is_correct = choice.is_correct
+                    except Choice.DoesNotExist:
+                        is_correct = False
+                else:
+                    # Hech qanday variant tanlanmagan bo‘lsa, noto‘g‘ri deb hisoblaymiz
+                    is_correct = False
             elif question.question_type == 'SA':
-                # Qisqa javob uchun kalit so‘zlar bilan tekshirish
-                correct_answer = question.choices.filter(is_correct=True).first()
-                if correct_answer:
-                    # Oddiy moslik o‘rniga regex yoki qisman moslik
-                    pattern = re.compile(rf'\b{re.escape(correct_answer.text.lower())}\b', re.IGNORECASE)
-                    is_correct = bool(pattern.search(text_answer.lower())) if text_answer else False
+                if text_answer:
+                    correct_answer = question.choices.filter(is_correct=True).first()
+                    if correct_answer:
+                        pattern = re.compile(rf'\b{re.escape(correct_answer.text.lower())}\b', re.IGNORECASE)
+                        is_correct = bool(pattern.search(text_answer.lower()))
+                else:
+                    is_correct = False
             elif question.question_type == 'CD':
-                # Kod yozish uchun oddiy tekshirish (haqiqiy loyihada test case’lar kerak)
-                correct_answer = question.choices.filter(is_correct=True).first()
-                if correct_answer:
-                    is_correct = text_answer.strip() == correct_answer.text.strip()
+                if text_answer:
+                    correct_answer = question.choices.filter(is_correct=True).first()
+                    if correct_answer:
+                        # Kod tekshirish uchun oddiy moslik (haqiqiy loyihada test case’lar kerak)
+                        is_correct = text_answer == correct_answer.text.strip()
+                else:
+                    is_correct = False
 
             if is_correct:
-                score = question.points * settings.points_per_correct
+                score = question.points * points_per_correct
                 correct_answers += 1
                 current_streak += 1
-                if current_streak <= settings.max_streak:
-                    score += settings.streak_bonus
+                if current_streak <= max_streak:
+                    score += streak_bonus
                     streak = max(streak, current_streak)
             else:
                 wrong_answers += 1
@@ -97,11 +117,17 @@ def submit_quiz(request):
             answer.save()
             total_score += score
 
+        # Umumiy savollar sonini hisoblash (javob berilmagan savollarni hisobga olish uchun)
+        total_questions = quiz.questions.count()
+        unanswered = total_questions - (correct_answers + wrong_answers)
+        wrong_answers += unanswered  # Javob berilmagan savollar xato sifatida hisoblanadi
+
         # Yulduzlar hisoblash
-        percentage = (correct_answers / max(1, (correct_answers + wrong_answers))) * 100
-        stars = 3 if percentage >= settings.star_thresholds.get('3', 80) else \
-                2 if percentage >= settings.star_thresholds.get('2', 60) else \
-                1 if percentage >= settings.star_thresholds.get('1', 0) else 0
+        percentage = (correct_answers / max(1, total_questions)) * 100
+        star_thresholds = settings.star_thresholds or {'1': 0, '2': 60, '3': 80}  # Default thresholds
+        stars = 3 if percentage >= star_thresholds.get('3', 80) else \
+                2 if percentage >= star_thresholds.get('2', 60) else \
+                1 if percentage >= star_thresholds.get('1', 0) else 0
 
         # Submission ni yangilash
         submission.total_score = total_score
@@ -135,6 +161,8 @@ def submit_quiz(request):
             'total_score': total_score,
             'correct_answers': correct_answers,
             'wrong_answers': wrong_answers,
+            'unanswered': unanswered,
+            'total_questions': total_questions,
             'streak': streak,
             'stars': stars,
             'leaderboard_position': leaderboard_position,

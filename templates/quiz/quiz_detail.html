@@ -1,545 +1,469 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}
-{{ quiz.title }} - Test | Bekendchi
-{% endblock %}
-
-{% block extra_head %}
-<meta name="description" content="{{ quiz.description|truncatewords:20 }}">
-<meta property="og:title" content="{{ quiz.title }} - Test | Bekendchi">
-<meta property="og:description" content="{{ quiz.description|truncatewords:20 }}">
-<meta property="og:image" content="{{ quiz.cover_image|default:'/static/images/default_quiz.jpg' }}">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/js-confetti@0.11.0/dist/js-confetti.browser.min.css">
-<style>
-  .quiz-header {
-    background: linear-gradient(145deg, rgba(0, 173, 181, 0.2), rgba(18, 18, 18, 0.8));
-    border-radius: 15px;
-    padding: 20px;
-    box-shadow: 0 0 20px rgba(0, 173, 181, 0.5);
-  }
-  .question-nav {
-    width: 40px;
-    height: 40px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid #00adb5;
-    color: #00adb5;
-    transition: all 0.3s ease;
-    position: relative;
-  }
-  .question-nav:hover, .question-nav.active {
-    background-color: #00adb5;
-    color: #121212;
-    box-shadow: 0 0 10px rgba(0, 173, 181, 0.5);
-  }
-  .question-nav.correct::after {
-    content: '✅';
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    font-size: 1rem;
-  }
-  .question-nav.incorrect::after {
-    content: '❌';
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    font-size: 1rem;
-  }
-  .question-block {
-    display: none;
-    animation: fadeIn 0.5s ease-in;
-  }
-  .question-block.active {
-    display: block;
-  }
-  .form-check-input:checked {
-    background-color: #00adb5;
-    border-color: #00adb5;
-  }
-  .form-control {
-    background: rgba(40, 48, 49, 0.8);
-    border: 1px solid #00adb5;
-    color: #ffffff;
-  }
-  .form-control:focus {
-    border-color: #00adb5;
-    box-shadow: 0 0 10px rgba(0, 173, 181, 0.5);
-  }
-  .timer {
-    color: #ff4d4d;
-    font-weight: bold;
-    font-family: 'Orbitron', sans-serif;
-  }
-  .timer.warning {
-    animation: pulseRed 0.5s infinite;
-  }
-  .neon-btn {
-    background: #00adb5;
-    color: #121212;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 20px;
-    transition: all 0.3s ease;
-  }
-  .neon-btn:hover {
-    background: #ffffff;
-    color: #00adb5;
-    box-shadow: 0 0 15px rgba(0, 173, 181, 0.8);
-  }
-  .progress-bar {
-    background: linear-gradient(90deg, #00adb5, #4d79ff);
-    transition: width 0.5s ease;
-  }
-  .answer-input:disabled {
-    background-color: #555;
-    cursor: not-allowed;
-  }
-  .correct-answer {
-    animation: pulseGreen 0.5s ease;
-    border: 2px solid #28a745 !important;
-  }
-  .incorrect-answer {
-    animation: shake 0.5s ease;
-    border: 2px solid #dc3545 !important;
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes pulseGreen {
-    0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
-    70% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
-  }
-  @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-    20%, 40%, 60%, 80% { transform: translateX(5px); }
-  }
-  @keyframes pulseRed {
-    0% { text-shadow: 0 0 5px #ff4d4d; }
-    50% { text-shadow: 0 0 10px #ff4d4d; }
-    100% { text-shadow: 0 0 5px #ff4d4d; }
-  }
-</style>
-{% endblock %}
-
+{% block title %}{{ quiz.title }} | Bekendchi{% endblock %}
 {% block content %}
-<div class="container mt-5" data-aos="fade-up">
-  <!-- Quiz Header -->
-  <div class="quiz-header mb-4">
-    <div class="row align-items-center">
-      <div class="col-md-3">
-        {% if quiz.cover_image %}
-          <img src="{{ quiz.cover_image }}" class="img-fluid rounded" alt="{{ quiz.title }} tasviri" style="max-height: 150px; object-fit: cover;">
-        {% else %}
-          <div class="bg-dark text-center p-4 rounded" style="min-height: 150px;">
-            <i class="bi bi-question-circle-fill neon-text" style="font-size: 3rem;"></i>
+<div class="container py-5" data-aos="fade-up">
+  <!-- Quiz sarlavhasi -->
+  <div class="row mb-5">
+    <div class="col-12 text-center">
+      <h2 class="neon-text">{{ quiz.title }}</h2>
+      <p class="text-white">{{ quiz.description }}</p>
+      <div class="d-flex justify-content-center gap-3 flex-wrap">
+        <span class="badge bg-primary">{{ quiz.subject.name }}</span>
+        <span class="badge bg-info">{{ quiz.get_difficulty_display }}</span>
+        <span class="badge bg-secondary">
+          {% if quiz.duration %}{{ quiz.duration }} daqiqa{% else %}Cheklanmagan{% endif %}
+        </span>
+      </div>
+      <!-- Umumiy taymer -->
+      {% if quiz.duration %}
+        <div class="mt-4">
+          <h5 class="text-white">Qolgan vaqt: <span id="quiz-timer" class="neon-text">00:00</span></h5>
+          <div class="progress" style="height: 10px;">
+            <div id="quiz-progress-bar" class="progress-bar bg-primary" role="progressbar" style="width: 100%;"></div>
           </div>
-        {% endif %}
-      </div>
-      <div class="col-md-9">
-        <h2 class="neon-text">{{ quiz.title }}</h2>
-        <p class="text-white">
-          <strong>Fan:</strong> {{ quiz.subject.icon|default:"📚" }} {{ quiz.subject.name }}<br>
-          <strong>Qiyinlik:</strong> {{ quiz.get_difficulty_display }}<br>
-          <strong>Savollar soni:</strong> {{ questions.count }}<br>
-          <strong>Davomiylik:</strong> {% if quiz.duration %}{{ quiz.duration|time:"H:i:s" }}{% else %}Cheklanmagan{% endif %}
-        </p>
-        {% if quiz.description %}
-          <p class="text-white">{{ quiz.description }}</p>
-        {% endif %}
-        {% if leaderboard_position %}
-          <p class="text-success"><strong>Leaderboard’dagi o‘rningiz:</strong> {{ leaderboard_position }}</p>
-        {% endif %}
-      </div>
+        </div>
+      {% endif %}
+      {% if best_submission %}
+        <div class="alert custom-alert custom-alert-success mt-3">
+          <strong>Eng yaxshi natijangiz:</strong> {{ best_submission.total_score }} ball, {{ best_submission.stars }} yulduz
+        </div>
+      {% endif %}
+      {% if not can_attempt %}
+        <div class="alert custom-alert custom-alert-error mt-3">
+          Siz maksimal urinishlar soniga yetdingiz yoki quiz yakunlangan.
+        </div>
+      {% endif %}
     </div>
   </div>
 
-  <!-- Quiz Form -->
+  <!-- Savollar -->
   {% if can_attempt %}
-    <div class="card" data-aos="zoom-in">
-      <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-          <h5 class="neon-text">Savol <span id="currentQuestion">1</span> / {{ questions.count }}</h5>
-          <div class="progress" style="width: 50%; height: 20px;">
-            <div class="progress-bar" id="progressBar" role="progressbar" style="width: {% widthratio 1 questions.count 100 %}%;" aria-valuenow="1" aria-valuemin="1" aria-valuemax="{{ questions.count }}">{% widthratio 1 questions.count 100 %}%</div>
+    <form id="quiz-form" class="mb-5">
+      {% csrf_token %}
+      <div id="question-container">
+        {% for question in questions %}
+          <div class="question-card card mb-4 {% if forloop.first %}active{% else %}d-none{% endif %}" data-question-index="{{ forloop.counter0 }}" data-aos="fade-up">
+            <!-- Savol matni -->
+            <div class="card-body">
+              <h5 class="card-title text-white mb-3">
+                {{ forloop.counter }}. {{ question.text }}
+                <small class="text-muted d-block mt-1">
+                  ({{ question.get_question_type_display }} | {{ question.points }} ball | {{ question.time_limit }} sekund)
+                </small>
+              </h5>
+              <!-- Savol uchun taymer -->
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-white">Savol vaqti: <span class="question-timer neon-text" data-time-limit="{{ question.time_limit }}">00:00</span></span>
+                <span class="text-white">Savollar: {{ forloop.counter }} / {{ questions|length }}</span>
+              </div>
+              <!-- Progress bar -->
+              <div class="progress mb-3" style="height: 8px;">
+                <div class="progress-bar question-progress-bar bg-info" role="progressbar" style="width: 100%;"></div>
+              </div>
+              <!-- Javoblar -->
+              {% if question.question_type == 'MC' %}
+                <div class="d-flex flex-column gap-3">
+                  {% for choice in question.choices.all %}
+                    <label class="choice-label d-flex align-items-center gap-2 p-2 rounded" style="border: 2px solid #00adb5; transition: all 0.3s;">
+                      <input type="radio" name="answers[{{ question.id }}][choice_id]" value="{{ choice.id }}" class="form-check-input choice-input" style="width: 20px; height: 20px; border: 2px solid #00adb5;">
+                      <span class="text-white">{{ choice.text }}</span>
+                    </label>
+                  {% endfor %}
+                </div>
+              {% elif question.question_type == 'SA' %}
+                <textarea class="form-control bg-dark text-white border-primary answer-textarea" name="answers[{{ question.id }}][text]" rows="4" placeholder="Javobingizni kiriting..." style="border: 2px solid #00adb5; transition: all 0.3s;"></textarea>
+              {% elif question.question_type == 'CD' %}
+                <div id="editor-{{ question.id }}" class="bg-dark border border-primary rounded" style="height: 200px;"></div>
+                <textarea class="d-none" name="answers[{{ question.id }}][text]" id="code-{{ question.id }}"></textarea>
+              {% endif %}
+              <div class="d-flex justify-content-between mt-3">
+                <button type="button" class="btn btn-auth check-answer-btn" data-question-id="{{ question.id }}">Tekshirish</button>
+                <button type="button" class="btn btn-auth next-question-btn">Keyingi</button>
+              </div>
+              <div class="answer-feedback mt-3"></div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+      <div class="text-center">
+        <button type="submit" class="btn btn-auth btn-lg d-none" id="submit-quiz-btn">Quizni yuborish</button>
+      </div>
+    </form>
+  {% else %}
+    <h4 class="text-warning text-center">Savollar faqat faol quizda ko‘rsatiladi.</h4>
+  {% endif %}
+
+  <!-- Oldingi urinishlar -->
+  {% if user_submissions %}
+    <h3 class="neon-text mb-4">Sizning urinishlaringiz</h3>
+    <div class="row g-4">
+      {% for submission in user_submissions %}
+        <div class="col-md-6 col-lg-4" data-aos="zoom-in">
+          <div class="card attempt-card">
+            <div class="card-body">
+              <h5 class="card-title neon-text">Urinish #{{ submission.attempt_number }}</h5>
+              <p class="text-white"><strong class="neon-text">Ball:</strong> {{ submission.total_score }}</p>
+              <p class="text-white"><strong class="neon-text">To‘g‘ri:</strong> {{ submission.correct_answers }}</p>
+              <p class="text-white"><strong class="neon-text">Xato:</strong> {{ submission.wrong_answers }}</p>
+              <p class="text-white"><strong class="neon-text">Yulduzlar:</strong>
+                <span class="stars">
+                  {% for i in "123" %}
+                    <i class="bi bi-star-fill {% if submission.stars >= forloop.counter %}text-warning{% else %}text-muted{% endif %}"></i>
+                  {% endfor %}
+                </span>
+              </p>
+              <p class="text-white"><strong class="neon-text">Vaqt:</strong> {{ submission.submitted_at|date:"Y-m-d H:i" }}</p>
+            </div>
           </div>
         </div>
-        <form id="quizForm" method="post" action="{% url 'quizz:submit_quiz' %}">
-          {% csrf_token %}
-          <input type="hidden" name="quiz_id" value="{{ quiz.id }}">
-
-          <!-- Question Navigation -->
-          <div class="d-flex justify-content-center flex-wrap mb-4">
-            {% for question in questions %}
-              <button type="button" class="btn question-nav {% if forloop.first %}active{% endif %}" data-question="{{ forloop.counter }}">{{ forloop.counter }}</button>
-            {% endfor %}
-          </div>
-
-          <!-- Questions -->
-          {% for question in questions %}
-            <div class="question-block {% if not forloop.first %}d-none{% else %}active{% endif %}" data-question="{{ forloop.counter }}" data-time-limit="{{ question.time_limit }}">
-              <div class="card mb-3">
-                <div class="card-body">
-                  <h6 class="card-title neon-text">
-                    {{ forloop.counter }}-Savol: {{ question.text }}
-                    <span class="float-end badge bg-info">{{ question.points }} ball</span>
-                  </h6>
-                  <p class="text-white">Qolgan vaqt: <span class="timer" id="timer-{{ forloop.counter }}">{{ question.time_limit }}</span> sekund</p>
-
-                  <!-- Multiple Choice -->
-                  {% if question.question_type == 'MC' %}
-                    {% for choice in question.choices.all %}
-                      <div class="form-check mb-2">
-                        <input class="form-check-input answer-input" type="radio" name="answers[{{ forloop.parentloop.counter0 }}][choice_id]" id="choice_{{ choice.id }}" value="{{ choice.id }}" required>
-                        <label class="form-check-label text-white" for="choice_{{ choice.id }}">{{ choice.text }}</label>
-                      </div>
-                    {% endfor %}
-                    <input type="hidden" name="answers[{{ forloop.parentloop.counter0 }}][question_id]" value="{{ question.id }}">
-
-                  <!-- Short Answer -->
-                  {% elif question.question_type == 'SA' %}
-                    <div class="mb-3">
-                      <textarea class="form-control answer-input" name="answers[{{ forloop.parentloop.counter0 }}][text]" rows="3" placeholder="Javobingizni kiriting..." required></textarea>
-                    </div>
-                    <input type="hidden" name="answers[{{ forloop.parentloop.counter0 }}][question_id]" value="{{ question.id }}">
-
-                  <!-- Coding -->
-                  {% elif question.question_type == 'CD' %}
-                    <div class="mb-3">
-                      <textarea class="form-control answer-input" name="answers[{{ forloop.parentloop.counter0 }}][text]" rows="5" placeholder="Kodingizni kiriting..." required></textarea>
-                    </div>
-                    <input type="hidden" name="answers[{{ forloop.parentloop.counter0 }}][question_id]" value="{{ question.id }}">
-                  {% endif %}
-                </div>
-              </div>
-            </div>
-          {% endfor %}
-
-          <!-- Navigation Buttons -->
-          <div class="d-flex justify-content-between">
-            <button type="button" class="neon-btn" id="prevBtn" disabled>Orqaga</button>
-            <button type="button" class="neon-btn" id="nextBtn">Keyingisi</button>
-            <button type="submit" class="neon-btn d-none" id="submitBtn">Testni Yakunlash</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  {% else %}
-    <div class="card text-center" data-aos="fade-up">
-      <div class="card-body">
-        <h5 class="neon-text">Testni Boshlash Imkonsiz</h5>
-        <p class="text-white">
-          {% if not quiz.is_ongoing %}
-            Bu test yakunlangan yoki hali boshlanmagan.
-          {% else %}
-            Siz maksimal urinishlar soniga yetdingiz ({{ quiz.max_attempts }}).
-          {% endif %}
-        </p>
-        <a href="{% url 'quizz:quizl' %}" class="neon-btn">Boshqa Testlarni Ko‘rish</a>
-      </div>
+      {% endfor %}
     </div>
   {% endif %}
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/js-confetti@0.11.0/dist/js-confetti.browser.min.js"></script>
+<!-- Modal for quiz results -->
+<div class="modal fade" id="quizResultModal" tabindex="-1" aria-labelledby="quizResultModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark text-white border border-primary">
+      <div class="modal-header">
+        <h5 class="modal-title neon-text" id="quizResultModalLabel">Sizning natijangiz</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        <h3 id="result-message" class="neon-text"></h3>
+        <p><strong>Umumiy ball:</strong> <span id="result-score"></span></p>
+        <p><strong>Umumiy savollar:</strong> <span id="result-total-questions"></span></p>
+        <p><strong>To‘g‘ri javoblar:</strong> <span id="result-correct"></span></p>
+        <p><strong>Xato javoblar:</strong> <span id="result-wrong"></span></p>
+        <p><strong>Javob berilmagan:</strong> <span id="result-unanswered"></span></p>
+        <p><strong>Eng uzun streak:</strong> <span id="result-streak"></span></p>
+        <p><strong>Yulduzlar:</strong>
+          <span id="result-stars" class="stars"></span>
+        </p>
+        <p><strong>Leaderboard’dagi o‘rningiz:</strong> <span id="result-position"></span></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-auth" data-bs-dismiss="modal">Yopish</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Ace Editor for coding questions -->
+<script src="https://cdn.jsdelivr.net/npm/ace-builds@1.4.12/src-min-noconflict/ace.js"></script>
+<!-- Konfeti uchun JS -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-  const questions = document.querySelectorAll('.question-block');
-  const navButtons = document.querySelectorAll('.question-nav');
-  const prevBtn = document.getElementById('prevBtn');
-  const nextBtn = document.getElementById('nextBtn');
-  const submitBtn = document.getElementById('submitBtn');
-  const currentQuestionSpan = document.getElementById('currentQuestion');
-  const progressBar = document.getElementById('progressBar');
-  const quizForm = document.getElementById('quizForm');
-  const confetti = new JSConfetti();
-  let currentQuestion = 1;
-  let timerInterval = null;
-
-  function startTimer() {
-    const current = document.querySelector(`.question-block[data-question="${currentQuestion}"]`);
-    const timeLimit = parseInt(current.getAttribute('data-time-limit')) || 30;
-    const timerElement = document.getElementById(`timer-${currentQuestion}`);
-    let timeLeft = timeLimit;
-
-    if (timerInterval) {
-      clearInterval(timerInterval);
-    }
-
-    timerInterval = setInterval(() => {
-      timeLeft--;
-      timerElement.textContent = timeLeft;
-      if (timeLeft <= 10) {
-        timerElement.classList.add('warning');
-      } else {
-        timerElement.classList.remove('warning');
-      }
-
-      if (timeLeft <= 0) {
-        clearInterval(timerInterval);
-        current.querySelectorAll('.answer-input').forEach(input => input.disabled = true);
-        if (currentQuestion === questions.length) {
-          quizForm.dispatchEvent(new Event('submit', { cancelable: true }));
-        } else {
-          currentQuestion++;
-          updateQuestion();
-        }
-      }
-    }, 1000);
-  }
-
-  function updateQuestion() {
-    console.log(`Updating to question ${currentQuestion}`); // Debug
-    questions.forEach(q => q.classList.remove('active'));
-    navButtons.forEach(btn => btn.classList.remove('active'));
-
-    const current = document.querySelector(`.question-block[data-question="${currentQuestion}"]`);
-    const currentNav = document.querySelector(`.question-nav[data-question="${currentQuestion}"]`);
-    if (current && currentNav) {
-      current.classList.add('active');
-      currentNav.classList.add('active');
-      currentQuestionSpan.textContent = currentQuestion;
-
-      const progress = (currentQuestion / questions.length) * 100;
-      progressBar.style.width = `${progress}%`;
-      progressBar.textContent = `${Math.round(progress)}%`;
-      progressBar.setAttribute('aria-valuenow', currentQuestion);
-
-      prevBtn.disabled = currentQuestion === 1;
-      nextBtn.classList.toggle('d-none', currentQuestion === questions.length);
-      submitBtn.classList.toggle('d-none', currentQuestion !== questions.length);
-
-      startTimer();
-    } else {
-      console.error(`Savol yoki navigatsiya tugmasi topilmadi: ${currentQuestion}`);
-    }
-  }
-
-  async function checkAnswer(questionId, choiceId, text) {
-    try {
-      const response = await fetch('{% url "quizz:check_answer" %}', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': '{{ csrf_token }}'
-        },
-        body: JSON.stringify({ question_id: questionId, choice_id: choiceId, text })
-      });
-      const result = await response.json();
-      return result.is_correct;
-    } catch (error) {
-      console.error('Javob tekshirishda xato:', error);
-      return null;
-    }
-  }
-
-  updateQuestion();
-
-  prevBtn.addEventListener('click', () => {
-    if (currentQuestion > 1) {
-      currentQuestion--;
-      updateQuestion();
-    }
-  });
-
-  nextBtn.addEventListener('click', async () => {
-    if (currentQuestion < questions.length) {
-      const current = document.querySelector(`.question-block[data-question="${currentQuestion}"]`);
-      const inputs = current.querySelectorAll('.answer-input');
-      let answered = false;
-      let choiceId = null;
-      let text = null;
-
-      inputs.forEach(input => {
-        if (input.type === 'radio' && input.checked) {
-          answered = true;
-          choiceId = parseInt(input.value);
-        }
-        if (input.type === 'textarea' && input.value.trim()) {
-          answered = true;
-          text = input.value.trim();
-        }
-      });
-
-      if (!answered) {
-        alert('Iltimos, javobni tanlang yoki kiriting!');
-        return;
-      }
-
-      const questionId = parseInt(current.querySelector('input[name$="[question_id]"]').value);
-      const isCorrect = await checkAnswer(questionId, choiceId, text);
-      const currentNav = document.querySelector(`.question-nav[data-question="${currentQuestion}"]`);
-
-      if (isCorrect !== null) {
-        currentNav.classList.add(isCorrect ? 'correct' : 'incorrect');
-        inputs.forEach(input => {
-          input.classList.add(isCorrect ? 'correct-answer' : 'incorrect-answer');
-          input.disabled = true;
-        });
-        if (isCorrect) {
-          confetti.addConfetti({
-            emojis: ['✅', '🎉'],
-            confettiRadius: 4,
-            confettiNumber: 50
-          });
-        }
-      }
-
-      currentQuestion++;
-      updateQuestion();
-    }
-  });
-
-  navButtons.forEach(btn => {
-    btn.addEventListener('click', async () => {
-      const newQuestion = parseInt(btn.getAttribute('data-question'));
-      if (newQuestion === currentQuestion) return;
-
-      const current = document.querySelector(`.question-block[data-question="${currentQuestion}"]`);
-      const inputs = current.querySelectorAll('.answer-input');
-      let answered = false;
-      let choiceId = null;
-      let text = null;
-
-      inputs.forEach(input => {
-        if (input.type === 'radio' && input.checked) {
-          answered = true;
-          choiceId = parseInt(input.value);
-        }
-        if (input.type === 'textarea' && input.value.trim()) {
-          answered = true;
-          text = input.value.trim();
-        }
-      });
-
-      if (answered && newQuestion > currentQuestion) {
-        const questionId = parseInt(current.querySelector('input[name$="[question_id]"]').value);
-        const isCorrect = await checkAnswer(questionId, choiceId, text);
-        const currentNav = document.querySelector(`.question-nav[data-question="${currentQuestion}"]`);
-
-        if (isCorrect !== null) {
-          currentNav.classList.add(isCorrect ? 'correct' : 'incorrect');
-          inputs.forEach(input => {
-            input.classList.add(isCorrect ? 'correct-answer' : 'incorrect-answer');
-            input.disabled = true;
-          });
-          if (isCorrect) {
-            confetti.addConfetti({
-              emojis: ['✅', '🎉'],
-              confettiRadius: 4,
-              confettiNumber: 50
-            });
-          }
-        }
-      } else if (!answered && newQuestion > currentQuestion) {
-        alert('Iltimos, joriy savolga javob bering!');
-        return;
-      }
-
-      currentQuestion = newQuestion;
-      updateQuestion();
-    });
-  });
-
-  quizForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    if (timerInterval) {
-      clearInterval(timerInterval);
-    }
-
-    const formData = new FormData(quizForm);
-    const data = {
-      quiz_id: parseInt(formData.get('quiz_id')),
-      answers: []
-    };
-
-    questions.forEach((q, index) => {
-      const questionId = parseInt(q.querySelector('input[name$="[question_id]"]').value);
-      const answer = { question_id: questionId };
-      const choice = formData.get(`answers[${index}][choice_id]`);
-      const text = formData.get(`answers[${index}][text]`);
-      if (choice) answer.choice_id = parseInt(choice);
-      if (text) answer.text = text;
-      data.answers.push(answer);
-    });
-
-    try {
-      const response = await fetch(quizForm.action, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': formData.get('csrfmiddlewaretoken')
-        },
-        body: JSON.stringify(data)
-      });
-
-      const result = await response.json();
-      if (result.status === 'success') {
-        if (result.confetti) {
-          confetti.addConfetti({
-            emojis: ['🎉', '⭐'],
-            confettiRadius: 6,
-            confettiNumber: 200
-          });
-        }
-        localStorage.setItem('quizResult', JSON.stringify({
-          answered_questions: data.answers.filter(a => a.choice_id || a.text).length,
-          total_questions: questions.length,
-          correct_answers: result.correct_answers,
-          wrong_answers: result.wrong_answers,
-          total_score: result.total_score,
-          streak: result.streak,
-          stars: result.stars
-        }));
-        alert(result.message);
-        window.location.href = `{% url 'quizz:quiz_leaderboard' quiz.id %}?submission_id=${result.submission_id}`;
-      } else {
-        alert(result.error || 'Xatolik yuz berdi.');
-      }
-    } catch (error) {
-      console.error('Submit error:', error);
-      alert('Server bilan bog‘lanishda xatolik: ' + error.message);
-    }
-  });
-
-  // Javob tanlashda real vaqt tekshiruvi
-  questions.forEach(q => {
-    const inputs = q.querySelectorAll('.answer-input');
-    inputs.forEach(input => {
-      input.addEventListener('change', async () => {
-        const questionId = parseInt(q.querySelector('input[name$="[question_id]"]').value);
-        let choiceId = null;
-        let text = null;
-        if (input.type === 'radio' && input.checked) {
-          choiceId = parseInt(input.value);
-        } else if (input.type === 'textarea' && input.value.trim()) {
-          text = input.value.trim();
-        }
-        const isCorrect = await checkAnswer(questionId, choiceId, text);
-        const currentNav = document.querySelector(`.question-nav[data-question="${currentQuestion}"]`);
-
-        if (isCorrect !== null) {
-          currentNav.classList.add(isCorrect ? 'correct' : 'incorrect');
-          inputs.forEach(i => {
-            i.classList.add(isCorrect ? 'correct-answer' : 'incorrect-answer');
-            i.disabled = true;
-          });
-          if (isCorrect) {
-            confetti.addConfetti({
-              emojis: ['✅', '🎉'],
-              confettiRadius: 4,
-              confettiNumber: 50
-            });
-          }
-        }
-      });
-    });
+// Ace Editor initialization for coding questions
+document.querySelectorAll('[id^="editor-"]').forEach(editorDiv => {
+  const questionId = editorDiv.id.split('-')[1];
+  const editor = ace.edit(editorDiv.id);
+  editor.setTheme('ace/theme/monokai');
+  editor.session.setMode('ace/mode/python');
+  editor.setValue('# Kodingizni shu yerga yozing\n');
+  editor.on('change', () => {
+    document.getElementById(`code-${questionId}`).value = editor.getValue();
   });
 });
+
+// Quiz timer
+{% if quiz.duration %}
+const quizDuration = {{ quiz.duration }} * 60; // seconds
+let quizTimeLeft = quizDuration;
+const quizTimer = document.getElementById('quiz-timer');
+const quizProgressBar = document.getElementById('quiz-progress-bar');
+
+function updateQuizTimer() {
+  const minutes = Math.floor(quizTimeLeft / 60);
+  const seconds = quizTimeLeft % 60;
+  quizTimer.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  const progress = (quizTimeLeft / quizDuration) * 100;
+  quizProgressBar.style.width = `${progress}%`;
+  if (quizTimeLeft <= 0) {
+    document.getElementById('quiz-form').dispatchEvent(new Event('submit'));
+    return;
+  }
+  quizTimeLeft--;
+  setTimeout(updateQuizTimer, 1000);
+}
+updateQuizTimer();
+{% endif %}
+
+// Question timers
+document.querySelectorAll('.question-timer').forEach(timer => {
+  let timeLeft = parseInt(timer.dataset.timeLimit);
+  const progressBar = timer.closest('.card-body').querySelector('.question-progress-bar');
+  const updateTimer = () => {
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+    timer.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    const progress = (timeLeft / parseInt(timer.dataset.timeLimit)) * 100;
+    progressBar.style.width = `${progress}%`;
+    if (timeLeft <= 0) {
+      const nextBtn = timer.closest('.card-body').querySelector('.next-question-btn');
+      if (nextBtn) nextBtn.click();
+      return;
+    }
+    timeLeft--;
+    setTimeout(updateTimer, 1000);
+  };
+  if (timer.closest('.question-card').classList.contains('active')) {
+    updateTimer();
+  }
+});
+
+// Navigation between questions
+document.querySelectorAll('.next-question-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    const currentCard = this.closest('.question-card');
+    const nextCard = currentCard.nextElementSibling;
+    if (nextCard && nextCard.classList.contains('question-card')) {
+      currentCard.classList.remove('active');
+      currentCard.classList.add('d-none');
+      nextCard.classList.remove('d-none');
+      nextCard.classList.add('active');
+      const timer = nextCard.querySelector('.question-timer');
+      if (timer) {
+        const updateTimer = timer.__updateTimer;
+        if (updateTimer) updateTimer();
+      }
+    } else {
+      document.getElementById('submit-quiz-btn').classList.remove('d-none');
+    }
+  });
+});
+
+// Check answer with creative animations
+document.querySelectorAll('.check-answer-btn').forEach(btn => {
+  btn.addEventListener('click', async function() {
+    const questionId = this.dataset.questionId;
+    const form = document.getElementById('quiz-form');
+    const formData = new FormData(form);
+    const data = {};
+    formData.forEach((value, key) => {
+      if (key.includes(`answers[${questionId}]`)) {
+        const match = key.match(/answers\[(\d+)\]\[(\w+)\]/);
+        data[match[2]] = value;
+      }
+    });
+    data.question_id = questionId;
+
+    const response = await fetch('{% url 'quizz:check_answer' %}', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+      },
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+    const feedback = this.nextElementSibling;
+    if (result.is_correct) {
+      feedback.innerHTML = `
+        <div class="feedback-success animate__animated animate__zoomIn">
+          <span class="neon-text-success">Ajoyib! To‘g‘ri! 🎉</span>
+        </div>
+      `;
+      confetti({
+        particleCount: 50,
+        spread: 60,
+        origin: { y: 0.6 },
+        colors: ['#00adb5', '#ff4d4d', '#ffd700']
+      });
+    } else {
+      feedback.innerHTML = `
+        <div class="feedback-error animate__animated animate__shakeX">
+          <span class="neon-text-error">Afsus, xato! Qayta urinib ko‘ring! 💪</span>
+        </div>
+      `;
+    }
+    setTimeout(() => feedback.innerHTML = '', 4000);
+  });
+});
+
+// Submit quiz
+document.getElementById('quiz-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const formData = new FormData(this);
+  const answers = [];
+  formData.forEach((value, key) => {
+    if (key.startsWith('answers')) {
+      const match = key.match(/answers\[(\d+)\]\[(\w+)\]/);
+      if (match) {
+        const questionId = match[1];
+        const field = match[2];
+        let answer = answers.find(a => a.question_id === questionId);
+        if (!answer) {
+          answer = { question_id: questionId };
+          answers.push(answer);
+        }
+        answer[field] = value;
+      }
+    }
+  });
+
+  const response = await fetch('{% url 'quizz:submit_quiz' %}', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+    },
+    body: JSON.stringify({ quiz_id: {{ quiz.id }}, answers }),
+  });
+
+  const result = await response.json();
+  console.log("Submit quiz response:", result); // Debug uchun
+
+  if (result.status === 'success') {
+    // Modalni ko‘rsatish
+    document.getElementById('result-message').textContent = result.message || 'Natija topilmadi.';
+    document.getElementById('result-score').textContent = result.total_score || 0;
+    document.getElementById('result-total-questions').textContent = result.total_questions || 0;
+    document.getElementById('result-correct').textContent = result.correct_answers || 0;
+    document.getElementById('result-wrong').textContent = result.wrong_answers || 0;
+    document.getElementById('result-unanswered').textContent = result.unanswered || 0;
+    document.getElementById('result-streak').textContent = result.streak || 0;
+
+    // Yulduzlarni vizual ko‘rsatish
+    const starsContainer = document.getElementById('result-stars');
+    starsContainer.innerHTML = '';
+    const starsCount = result.stars || 0;
+    for (let i = 1; i <= 5; i++) {
+      const starIcon = document.createElement('i');
+      starIcon.className = `bi bi-star-fill ${i <= starsCount ? 'text-warning' : 'text-muted'}`;
+      starsContainer.appendChild(starIcon);
+    }
+
+    document.getElementById('result-position').textContent = result.leaderboard_position || 'Noma’lum';
+    const modal = new bootstrap.Modal(document.getElementById('quizResultModal'));
+    modal.show();
+
+    if (result.confetti) {
+      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+    }
+
+    setTimeout(() => location.reload(), 5000);
+  } else {
+    const alert = document.createElement('div');
+    alert.className = 'custom-alert custom-alert-error';
+    alert.innerHTML = `<span>${result.error || 'Xatolik yuz berdi.'}</span>`;
+    document.querySelector('.messages-container').appendChild(alert);
+    setTimeout(() => alert.remove(), 5000);
+  }
+});
 </script>
+<!-- Animate.css for feedback animations -->
+<link href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" rel="stylesheet">
+<style>
+/* Attempt card styling */
+.attempt-card {
+  background: rgba(34, 40, 49, 0.8);
+  border: 2px solid #00adb5;
+  border-radius: 10px;
+  transition: transform 0.3s ease;
+}
+
+.attempt-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 173, 181, 0.5);
+}
+
+.attempt-card .card-body {
+  padding: 20px;
+}
+
+.attempt-card .card-title {
+  font-size: 1.25rem;
+  margin-bottom: 15px;
+}
+
+.attempt-card p {
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
+.stars i {
+  font-size: 1.2rem;
+  margin-right: 5px;
+}
+
+/* Feedback styling */
+.feedback-success, .feedback-error {
+  padding: 10px 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.feedback-success {
+  background: rgba(0, 173, 181, 0.2);
+  border: 1px solid #00adb5;
+}
+
+.feedback-error {
+  background: rgba(255, 77, 77, 0.2);
+  border: 1px solid #ff4d4d;
+}
+
+.neon-text-success {
+  color: #00adb5;
+  text-shadow: 0 0 5px #00adb5, 0 0 10px #00adb5, 0 0 20px #00adb5;
+}
+
+.neon-text-error {
+  color: #ff4d4d;
+  text-shadow: 0 0 5px #ff4d4d, 0 0 10px #ff4d4d, 0 0 20px #ff4d4d;
+}
+
+/* Choice label hover effect */
+.choice-label:hover {
+  background: rgba(0, 173, 181, 0.2);
+  box-shadow: 0 0 10px rgba(0, 173, 181, 0.5);
+}
+
+/* Textarea focus effect */
+.answer-textarea:focus {
+  box-shadow: 0 0 15px rgba(0, 173, 181, 0.8);
+  border-color: #00adb5;
+}
+
+/* Progress bar animation */
+.progress-bar {
+  transition: width 1s ease-in-out;
+}
+
+/* Question card styling */
+.question-card {
+  background: rgba(34, 40, 49, 0.9);
+  border: 2px solid #00adb5;
+  border-radius: 10px;
+  transition: transform 0.3s ease;
+}
+
+.question-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 173, 181, 0.5);
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .question-card, .attempt-card {
+    padding: 10px;
+  }
+  .choice-label {
+    padding: 8px;
+  }
+  .answer-textarea {
+    font-size: 0.9rem;
+  }
+  .attempt-card .card-title {
+    font-size: 1.1rem;
+  }
+  .attempt-card p {
+    font-size: 0.9rem;
+  }
+}
+</style>
 {% endblock %}
