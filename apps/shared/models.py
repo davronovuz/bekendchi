@@ -8,3 +8,18 @@ class BaseModel(models.Model):
 
     class Meta:
         abstract = True
+
+
+
+
+class Banner(BaseModel):
+    title = models.CharField(max_length=200, verbose_name="Sarlavha")
+    text = models.CharField(max_length=200, verbose_name="Matn")
+    is_active = models.BooleanField(default=True, verbose_name="Faol")
+
+    class Meta:
+        verbose_name = "Banner"
+        verbose_name_plural = "Bannerlar"
+
+    def __str__(self):
+        return self.title

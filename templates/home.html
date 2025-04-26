@@ -123,8 +123,13 @@
 </style>
 
 <div class="hero">
-  <h1 id="banner-title" data-aos="fade-up">Salom, Dasturchi!</h1>
-  <p id="banner-text" data-aos="fade-up" data-aos-delay="200">Kod bu – zamonaviy she’riyat.</p>
+  {% if banner %}
+    <h1 id="banner-title" data-aos="fade-up">{{ banner.title }}</h1>
+    <p id="banner-text" data-aos="fade-up" data-aos-delay="200">{{ banner.text }}</p>
+  {% else %}
+    <h1 id="banner-title" data-aos="fade-up">Salom, Dasturchi!</h1>
+    <p id="banner-text" data-aos="fade-up" data-aos-delay="200">Kod bu – zamonaviy she’riyat.</p>
+  {% endif %}
 </div>
 
 <!-- Technology Orbit Section -->
@@ -199,22 +204,4 @@
   </div>
 </div>
 
-<script>
-  const banners = [
-    { title: "Algoritmlar yurak uradi!", text: "Kreativlik — bu kodning yuragi." },
-    { title: "Kod bu – zamonaviy she’riyat.", text: "Har satr – yangi bir fikr." },
-    { title: "Qora fon, oq matn – bu mening sahnam.", text: "Har kod orqasida orzu yotadi." },
-    { title: "0 va 1 orasida million imkoniyat yashiringan.", text: "Kod – bu ijodning eng sof ko‘rinishi." },
-    { title: "Terminal – bu ssenariy yoziladigan sahna.", text: "Buyruqlar – ijodiy gaplar." },
-    { title: "Kodlash bu sehr emas, bu tartiblangan g‘oya.", text: "Xar bir funksiya — mo‘jiza." },
-    { title: "Kod satrlari – orzularni quradigan g‘ishtlar.", text: "Orzularni bajaramiz, kompilyatsiya qilib." },
-    { title: "Back-end – bu sehrgarlar yashaydigan joy.", text: "Soxta narsa yo‘q, faqat logika." },
-    { title: "Buglar ketadi, ammo tajriba qoladi.", text: "Har xatolik – yangi dars." }
-  ];
-
-  // Random Banner
-  const randomBanner = banners[Math.floor(Math.random() * banners.length)];
-  document.getElementById('banner-title').innerText = randomBanner.title;
-  document.getElementById('banner-text').innerText = randomBanner.text;
-</script>
 {% endblock %}
