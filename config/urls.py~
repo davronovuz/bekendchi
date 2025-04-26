@@ -24,7 +24,7 @@ from django.contrib import admin
 handler404 = lambda request, exception: render(request, '404.html', status=404)
 
 urlpatterns =[
-    path('egasi/', admin.site.urls,),
+    path('admin/', admin.site.urls,),
     path('tinymce/', include('tinymce.urls')),
     path('', include('apps.shared.urls')),
     path('blog/', include('apps.blog.urls')),
