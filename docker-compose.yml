@@ -14,10 +14,12 @@ services:
     image: nginx:latest
     ports:
       - "80:80"
+      - "443:443"  # HTTPS uchun 443-port qo‘shildi
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
       - static-data:/app/staticfiles  # Statik fayllar
-      - media-data:/app/media  # Media fayllar (agar kerak bo‘lsa)
+      - media-data:/app/media  # Media fayllar
+      - /etc/letsencrypt:/etc/letsencrypt:ro  # SSL sertifikat fayllari
     depends_on:
       - app
     networks:

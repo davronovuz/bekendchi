@@ -68,7 +68,7 @@
                   {% for choice in question.choices.all %}
                     <label class="choice-label d-flex align-items-center gap-2 p-2 rounded" style="border: 2px solid #00adb5; transition: all 0.3s;">
                       <input type="radio" name="answers[{{ question.id }}][choice_id]" value="{{ choice.id }}" class="form-check-input choice-input" style="width: 20px; height: 20px; border: 2px solid #00adb5;">
-                      <span class="text-white">{{ choice.text }}</span>
+                      <span class="text-white choice-text">{{ choice.text }}</span>
                     </label>
                   {% endfor %}
                 </div>
@@ -125,7 +125,7 @@
 
 <!-- Modal for quiz results -->
 <div class="modal fade" id="quizResultModal" tabindex="-1" aria-labelledby="quizResultModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content bg-dark text-white border border-primary">
       <div class="modal-header">
         <h5 class="modal-title neon-text" id="quizResultModalLabel">Sizning natijangiz</h5>
@@ -143,6 +143,9 @@
           <span id="result-stars" class="stars"></span>
         </p>
         <p><strong>Leaderboard’dagi o‘rningiz:</strong> <span id="result-position"></span></p>
+        <hr>
+        <h5 class="neon-text">Savollar bo‘yicha natijalar:</h5>
+        <div id="detailed-results" class="text-left mt-3"></div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-auth" data-bs-dismiss="modal">Yopish</button>
@@ -156,6 +159,15 @@
 <!-- Konfeti uchun JS -->
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <script>
+// Utility function to show alerts
+function showAlert(message, type = 'error') {
+  const alert = document.createElement('div');
+  alert.className = `custom-alert custom-alert-${type} animate__animated animate__fadeIn`;
+  alert.innerHTML = `<span>${message}</span>`;
+  document.querySelector('.container').prepend(alert);
+  setTimeout(() => alert.remove(), 5000);
+}
+
 // Ace Editor initialization for coding questions
 document.querySelectorAll('[id^="editor-"]').forEach(editorDiv => {
   const questionId = editorDiv.id.split('-')[1];
@@ -209,15 +221,53 @@ document.querySelectorAll('.question-timer').forEach(timer => {
     timeLeft--;
     setTimeout(updateTimer, 1000);
   };
+  timer.__updateTimer = updateTimer;
   if (timer.closest('.question-card').classList.contains('active')) {
     updateTimer();
   }
 });
 
-// Navigation between questions
+// Variant tanlashda animatsiya va ta’kidlash
+document.querySelectorAll('.choice-input').forEach(input => {
+  input.addEventListener('change', function() {
+    const label = this.closest('.choice-label');
+    label.closest('.d-flex').querySelectorAll('.choice-label').forEach(l => {
+      l.classList.remove('selected', 'animate__animated', 'animate__pulse');
+    });
+    label.classList.add('selected', 'animate__animated', 'animate__pulse');
+  });
+});
+
+// Navigation between questions with validation
 document.querySelectorAll('.next-question-btn').forEach(btn => {
   btn.addEventListener('click', function() {
     const currentCard = this.closest('.question-card');
+    const feedback = currentCard.querySelector('.answer-feedback');
+    const currentIndex = parseInt(currentCard.dataset.questionIndex);
+    const totalQuestions = {{ questions|length }};
+
+    const radioInput = currentCard.querySelector('input[type="radio"]');
+    if (radioInput && !currentCard.querySelector('input[type="radio"]:checked')) {
+      feedback.innerHTML = `
+        <div class="feedback-error animate__animated animate__shakeX">
+          <span class="neon-text-error">Iltimos, javob variantini tanlang! ⚠️</span>
+        </div>
+      `;
+      setTimeout(() => feedback.innerHTML = '', 3000);
+      return;
+    }
+
+    const textInput = currentCard.querySelector('.answer-textarea, [id^="code-"]');
+    if (textInput && !textInput.value.trim()) {
+      feedback.innerHTML = `
+        <div class="feedback-error animate__animated animate__shakeX">
+          <span class="neon-text-error">Iltimos, javobingizni kiriting! ⚠️</span>
+        </div>
+      `;
+      setTimeout(() => feedback.innerHTML = '', 3000);
+      return;
+    }
+
     const nextCard = currentCard.nextElementSibling;
     if (nextCard && nextCard.classList.contains('question-card')) {
       currentCard.classList.remove('active');
@@ -225,11 +275,13 @@ document.querySelectorAll('.next-question-btn').forEach(btn => {
       nextCard.classList.remove('d-none');
       nextCard.classList.add('active');
       const timer = nextCard.querySelector('.question-timer');
-      if (timer) {
-        const updateTimer = timer.__updateTimer;
-        if (updateTimer) updateTimer();
+      if (timer && timer.__updateTimer) {
+        timer.__updateTimer();
       }
-    } else {
+    }
+
+    // Har bir savoldan keyin "Quizni yuborish" tugmasini ko‘rsatish
+    if (currentIndex >= totalQuestions - 2) { // Oxirgi yoki oxirgidan oldingi savolda
       document.getElementById('submit-quiz-btn').classList.remove('d-none');
     }
   });
@@ -241,46 +293,54 @@ document.querySelectorAll('.check-answer-btn').forEach(btn => {
     const questionId = this.dataset.questionId;
     const form = document.getElementById('quiz-form');
     const formData = new FormData(form);
-    const data = {};
+    const data = { question_id: questionId };
     formData.forEach((value, key) => {
       if (key.includes(`answers[${questionId}]`)) {
         const match = key.match(/answers\[(\d+)\]\[(\w+)\]/);
         data[match[2]] = value;
       }
     });
-    data.question_id = questionId;
 
-    const response = await fetch('{% url 'quizz:check_answer' %}', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
-      },
-      body: JSON.stringify(data),
-    });
-
-    const result = await response.json();
-    const feedback = this.nextElementSibling;
-    if (result.is_correct) {
-      feedback.innerHTML = `
-        <div class="feedback-success animate__animated animate__zoomIn">
-          <span class="neon-text-success">Ajoyib! To‘g‘ri! 🎉</span>
-        </div>
-      `;
-      confetti({
-        particleCount: 50,
-        spread: 60,
-        origin: { y: 0.6 },
-        colors: ['#00adb5', '#ff4d4d', '#ffd700']
+    try {
+      const response = await fetch('{% url 'quizz:check_answer' %}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+        },
+        body: JSON.stringify(data),
       });
-    } else {
-      feedback.innerHTML = `
-        <div class="feedback-error animate__animated animate__shakeX">
-          <span class="neon-text-error">Afsus, xato! Qayta urinib ko‘ring! 💪</span>
-        </div>
-      `;
+
+      if (!response.ok) {
+        throw new Error(`HTTP xatosi! Status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      const feedback = this.nextElementSibling;
+      if (result.is_correct) {
+        feedback.innerHTML = `
+          <div class="feedback-success animate__animated animate__zoomIn">
+            <span class="neon-text-success">Ajoyib! To‘g‘ri! 🎉</span>
+          </div>
+        `;
+        confetti({
+          particleCount: 50,
+          spread: 60,
+          origin: { y: 0.6 },
+          colors: ['#00adb5', '#ff4d4d', '#ffd700']
+        });
+      } else {
+        feedback.innerHTML = `
+          <div class="feedback-error animate__animated animate__shakeX">
+            <span class="neon-text-error">Afsus, xato! Qayta urinib ko‘ring! 💪</span>
+          </div>
+        `;
+      }
+      setTimeout(() => feedback.innerHTML = '', 4000);
+    } catch (error) {
+      console.error('Check answer xatosi:', error);
+      showAlert('Javobni tekshirishda xatolik yuz berdi!', 'error');
     }
-    setTimeout(() => feedback.innerHTML = '', 4000);
   });
 });
 
@@ -288,7 +348,11 @@ document.querySelectorAll('.check-answer-btn').forEach(btn => {
 document.getElementById('quiz-form').addEventListener('submit', async function(e) {
   e.preventDefault();
   const formData = new FormData(this);
+  const totalQuestions = {{ questions|length }};
   const answers = [];
+  const answeredQuestions = new Set();
+
+  // Formadan ma'lumotlarni olish
   formData.forEach((value, key) => {
     if (key.startsWith('answers')) {
       const match = key.match(/answers\[(\d+)\]\[(\w+)\]/);
@@ -301,57 +365,124 @@ document.getElementById('quiz-form').addEventListener('submit', async function(e
           answers.push(answer);
         }
         answer[field] = value;
+        answeredQuestions.add(questionId);
       }
     }
   });
 
-  const response = await fetch('{% url 'quizz:submit_quiz' %}', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
-    },
-    body: JSON.stringify({ quiz_id: {{ quiz.id }}, answers }),
+  // Javob berilmagan savollarni qo‘shish
+  document.querySelectorAll('.question-card').forEach(card => {
+    const questionId = card.querySelector('input[type="radio"], textarea')?.name.match(/answers\[(\d+)\]\[(\w+)\]/)?.[1];
+    if (questionId && !answeredQuestions.has(questionId)) {
+      answers.push({
+        question_id: questionId,
+        choice_id: null,
+        text: null
+      });
+    }
   });
 
-  const result = await response.json();
-  console.log("Submit quiz response:", result); // Debug uchun
+  console.log("Answers being sent to backend:", answers);
 
-  if (result.status === 'success') {
-    // Modalni ko‘rsatish
-    document.getElementById('result-message').textContent = result.message || 'Natija topilmadi.';
-    document.getElementById('result-score').textContent = result.total_score || 0;
-    document.getElementById('result-total-questions').textContent = result.total_questions || 0;
-    document.getElementById('result-correct').textContent = result.correct_answers || 0;
-    document.getElementById('result-wrong').textContent = result.wrong_answers || 0;
-    document.getElementById('result-unanswered').textContent = result.unanswered || 0;
-    document.getElementById('result-streak').textContent = result.streak || 0;
+  // Agar hech qanday javob berilmagan bo‘lsa, xabar ko‘rsatish
+  if (answers.length === 0 || answers.every(a => !a.choice_id && !a.text)) {
+    showAlert('Iltimos, kamida bitta savolga javob bering! ⚠️', 'error');
+    return;
+  }
 
-    // Yulduzlarni vizual ko‘rsatish
-    const starsContainer = document.getElementById('result-stars');
-    starsContainer.innerHTML = '';
-    const starsCount = result.stars || 0;
-    for (let i = 1; i <= 5; i++) {
-      const starIcon = document.createElement('i');
-      starIcon.className = `bi bi-star-fill ${i <= starsCount ? 'text-warning' : 'text-muted'}`;
-      starsContainer.appendChild(starIcon);
+  // Foydalanuvchiga barcha savollarni ko‘rib chiqishni eslatish
+  const unansweredCount = answers.filter(a => !a.choice_id && !a.text).length;
+  if (unansweredCount > 0) {
+    const proceed = confirm(`Sizda ${unansweredCount} ta javob berilmagan savol bor. Davom etishni xohlaysizmi?`);
+    if (!proceed) {
+      return;
+    }
+  }
+
+  try {
+    console.log("Submitting quiz to:", '{% url 'quizz:submit_quiz' %}');
+    const response = await fetch('{% url 'quizz:submit_quiz' %}', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+      },
+      body: JSON.stringify({ quiz_id: {{ quiz.id }}, answers }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP xatosi! Status: ${response.status}`);
     }
 
-    document.getElementById('result-position').textContent = result.leaderboard_position || 'Noma’lum';
-    const modal = new bootstrap.Modal(document.getElementById('quizResultModal'));
-    modal.show();
+    const result = await response.json();
+    console.log("Submit quiz response:", result);
 
-    if (result.confetti) {
-      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+    if (result.status === 'success') {
+      document.getElementById('result-message').textContent = result.message || 'Natija topilmadi.';
+      document.getElementById('result-score').textContent = result.total_score || 0;
+      document.getElementById('result-total-questions').textContent = result.total_questions || 0;
+      document.getElementById('result-correct').textContent = result.correct_answers || 0;
+      document.getElementById('result-wrong').textContent = result.wrong_answers || 0;
+      document.getElementById('result-unanswered').textContent = result.unanswered || 0;
+      document.getElementById('result-streak').textContent = result.streak || 0;
+
+      const starsContainer = document.getElementById('result-stars');
+      starsContainer.innerHTML = '';
+      const starsCount = result.stars || 0;
+      for (let i = 1; i <= 5; i++) {
+        const starIcon = document.createElement('i');
+        starIcon.className = `bi bi-star-fill ${i <= starsCount ? 'text-warning' : 'text-muted'}`;
+        starsContainer.appendChild(starIcon);
+      }
+
+      document.getElementById('result-position').textContent = result.leaderboard_position || 'Noma’lum';
+
+      const detailedResultsContainer = document.getElementById('detailed-results');
+      detailedResultsContainer.innerHTML = '';
+      result.detailed_results.forEach((detail, index) => {
+        const resultDiv = document.createElement('div');
+        resultDiv.className = `result-detail mb-3 p-2 rounded ${detail.is_correct ? 'bg-success' : 'bg-danger'} animate__animated animate__fadeIn`;
+        resultDiv.style.animationDelay = `${index * 0.2}s`;
+        resultDiv.innerHTML = `
+          <p><strong>Savol:</strong> ${detail.question_text}</p>
+          <p><strong>Turi:</strong> ${detail.type}</p>
+          <p><strong>Sizning javobingiz:</strong> ${detail.user_answer || 'Javob berilmagan'}</p>
+          <p><strong>To‘g‘ri javob:</strong> ${detail.correct_answer || 'N/A'}</p>
+          <p><strong>Holati:</strong> ${detail.is_correct ? 'To‘g‘ri ✅' : 'Xato ❌'}</p>
+          <p><strong>Ball:</strong> +${detail.score}</p>
+          ${detail.saved ? '' : '<p class="text-danger animate__animated animate__shakeX"><strong>Javob saqlanmadi! ⚠️</strong></p>'}
+        `;
+        detailedResultsContainer.appendChild(resultDiv);
+
+        if (!detail.saved) {
+          confetti({
+            particleCount: 20,
+            spread: 40,
+            origin: { y: 0.6 },
+            colors: ['#ff4d4d']
+          });
+        }
+      });
+
+      const modal = new bootstrap.Modal(document.getElementById('quizResultModal'));
+      modal.show();
+
+      if (result.confetti) {
+        confetti({
+          particleCount: 150,
+          spread: 90,
+          origin: { y: 0.6 },
+          colors: ['#00adb5', '#ff4d4d', '#ffd700']
+        });
+      }
+
+      setTimeout(() => location.reload(), 5000);
+    } else {
+      showAlert(result.error || 'Xatolik yuz berdi.', 'error');
     }
-
-    setTimeout(() => location.reload(), 5000);
-  } else {
-    const alert = document.createElement('div');
-    alert.className = 'custom-alert custom-alert-error';
-    alert.innerHTML = `<span>${result.error || 'Xatolik yuz berdi.'}</span>`;
-    document.querySelector('.messages-container').appendChild(alert);
-    setTimeout(() => alert.remove(), 5000);
+  } catch (error) {
+    console.error('Submit quiz xatosi:', error);
+    showAlert('Quizni yuborishda xatolik yuz berdi! Iltimos, qayta urinib ko‘ring.', 'error');
   }
 });
 </script>
@@ -417,10 +548,27 @@ document.getElementById('quiz-form').addEventListener('submit', async function(e
   text-shadow: 0 0 5px #ff4d4d, 0 0 10px #ff4d4d, 0 0 20px #ff4d4d;
 }
 
-/* Choice label hover effect */
+/* Choice label styling */
+.choice-label {
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
 .choice-label:hover {
   background: rgba(0, 173, 181, 0.2);
   box-shadow: 0 0 10px rgba(0, 173, 181, 0.5);
+}
+
+.choice-label.selected {
+  background: rgba(0, 173, 181, 0.3);
+  border-color: #00ffcc;
+  box-shadow: 0 0 15px rgba(0, 173, 181, 0.7);
+}
+
+.choice-label.selected .choice-text {
+  color: #00ffcc;
+  text-shadow: 0 0 5px #00ffcc;
 }
 
 /* Textarea focus effect */
@@ -447,6 +595,29 @@ document.getElementById('quiz-form').addEventListener('submit', async function(e
   box-shadow: 0 5px 15px rgba(0, 173, 181, 0.5);
 }
 
+/* Detailed results styling */
+.result-detail {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.result-detail.bg-success {
+  background: rgba(0, 173, 181, 0.2);
+  border: 1px solid #00adb5;
+}
+
+.result-detail.bg-danger {
+  background: rgba(255, 77, 77, 0.2);
+  border: 1px solid #ff4d4d;
+}
+
+.result-detail p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
 /* Responsive adjustments */
 @media (max-width: 576px) {
   .question-card, .attempt-card {
@@ -463,6 +634,9 @@ document.getElementById('quiz-form').addEventListener('submit', async function(e
   }
   .attempt-card p {
     font-size: 0.9rem;
+  }
+  .result-detail p {
+    font-size: 0.8rem;
   }
 }
 </style>
