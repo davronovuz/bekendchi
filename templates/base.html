@@ -455,6 +455,11 @@
               <a class="nav-link" href="{% url 'group_list' %}">Davomat</a>
             </li>
             {% endif %}
+            {% if user.is_authenticated and user.is_superuser or user.is_staff %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'ega' %}">Admin</a>
+            </li>
+            {% endif %}
           </ul>
           <!-- Search Form -->
           <form class="d-flex me-3 search-form" role="search" method="get">
