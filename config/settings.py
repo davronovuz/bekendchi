@@ -65,6 +65,7 @@ CSRF_TRUSTED_ORIGINS = [
     'https://bekendchi.uz',
     'http://bekendchi.uz',
     'http://bekendchi.uz',
+    'http://194.163.171.25:7000',
 ]
 
 
