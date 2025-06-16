@@ -78,7 +78,7 @@ from .forms import MidtermAssessmentForm, MidtermTaskForm
 @login_required
 def midtermassessment_list(request):
     assessments = MidtermAssessment.objects.select_related('student').prefetch_related('tasks').all()
-    return render(request, 'midtermassessment_list.html', {'assessments': assessments})
+    return render(request, 'midterm_list.html', {'assessments': assessments})
 
 @login_required
 def midtermassessment_create(request):
