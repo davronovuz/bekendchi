@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block title %}Nazorat Ishlari Ro'yxati{% endblock %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+  .midterm-table th, .midterm-table td {
+    font-family: 'Poppins', sans-serif;
+    vertical-align: middle;
+    color: var(--clr-fg);
+  }
+  .midterm-table th {
+    background: var(--clr-bg-alt);
+    color: var(--clr-fg-alt);
+  }
+  .midterm-table td {
+    background: var(--clr-bg);
+  }
+  .btn-action {
+    font-size: 0.8rem;
+    margin: 0 5px;
+  }
+  .section__title {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--clr-primary);
+    text-shadow: 0 0 8px rgba(0, 173, 181, 0.5);
+  }
+</style>
+
+<div class="section" data-aos="fade-up">
+  <h2 class="section__title">Nazorat Ishlari Ro'yxati</h2>
+
+  {% if user.is_authenticated and user.is_superuser or user.is_staff %}
+    <div class="mb-4">
+      <a href="{% url 'midterm_create' %}" class="btn btn--outline">Yangi Nazorat Ishi Qo'shish</a>
+    </div>
+
+    {% if assessments %}
+      <div class="card">
+        <div class="card-body">
+          <table class="table table-dark midterm-table">
+            <thead>
+              <tr>
+                <th>Talaba</th>
+                <th>Nazorat Raqami</th>
+                <th>Sana</th>
+                <th>Izoh</th>
+                <th>Vazifalar</th>
+                <th>Amallar</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for assessment in assessments %}
+                <tr data-aos="fade-up" data-aos-delay="{% cycle '100' '200' '300' %}">
+                  <td>{{ assessment.student }}</td>
+                  <td>{{ assessment.get_assessment_number_display }}</td>
+                  <td>{{ assessment.date }}</td>
+                  <td>{{ assessment.comment|default:"-" }}</td>
+                  <td>
+                    <ul>
+                      {% for task in assessment.tasks.all %}
+                        <li>{{ task.task_type }}: {{ task.score }}/{{ task.max_score }} {% if task.comment %}({{ task.comment }}){% endif %}</li>
+                      {% empty %}
+                        <li>Vazifalar yo'q</li>
+                      {% endfor %}
+                    </ul>
+                  </td>
+                  <td>
+                    <a href="{% url 'midterm_edit' assessment.id %}" class="btn btn--outline btn-action">Tahrirlash</a>
+                    <a href="{% url 'midterm_delete' assessment.id %}" class="btn btn--outline btn-action" onclick="return confirm('Haqiqatan ham o\'chirishni xohlaysizmi?');">O'chirish</a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    {% else %}
+      <p class="card-text">Hozircha nazorat ishlari yo'q.</p>
+    {% endif %}
+  {% else %}
+    <p class="card-text">Bu sahifani ko'rish uchun admin huquqlari talab qilinadi.</p>
+  {% endif %}
+</div>
+{% endblock %}

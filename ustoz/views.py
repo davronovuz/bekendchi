@@ -65,3 +65,89 @@ def update_attendance(request, group_id):
 
         return redirect('group_attendance', group_id=group.id)
     return redirect('group_attendance', group_id=group_id)
+
+
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from .models import MidtermAssessment, MidtermTask, Student
+from .forms import MidtermAssessmentForm, MidtermTaskForm
+
+@login_required
+def midtermassessment_list(request):
+    assessments = MidtermAssessment.objects.select_related('student').prefetch_related('tasks').all()
+    return render(request, 'midtermassessment_list.html', {'assessments': assessments})
+
+@login_required
+def midtermassessment_create(request):
+    if request.method == "POST":
+        form = MidtermAssessmentForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Nazorat ishi muvaffaqiyatli qo'shildi!")
+            return redirect('midtermassessment_list')
+    else:
+        form = MidtermAssessmentForm()
+    return render(request, 'midterm_form.html', {'form': form})
+
+@login_required
+def midtermassessment_edit(request, pk):
+    assessment = get_object_or_404(MidtermAssessment, pk=pk)
+    if request.method == "POST":
+        form = MidtermAssessmentForm(request.POST, instance=assessment)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Nazorat ishi yangilandi!")
+            return redirect('midtermassessment_list')
+    else:
+        form = MidtermAssessmentForm(instance=assessment)
+    return render(request, 'midterm_form.html', {'form': form})
+
+@login_required
+def midtermassessment_delete(request, pk):
+    assessment = get_object_or_404(MidtermAssessment, pk=pk)
+    if request.method == "POST":
+        assessment.delete()
+        messages.success(request, "Nazorat ishi o'chirildi!")
+        return redirect('midtermassessment_list')
+    return render(request, 'midtermassessment_confirm_delete.html', {'assessment': assessment})
+
+# MidtermTask uchun CRUD
+@login_required
+def midtermtask_create(request, assessment_id):
+    assessment = get_object_or_404(MidtermAssessment, pk=assessment_id)
+    if request.method == "POST":
+        form = MidtermTaskForm(request.POST)
+        if form.is_valid():
+            task = form.save(commit=False)
+            task.assessment = assessment
+            task.save()
+            messages.success(request, "Vazifa muvaffaqiyatli qo'shildi!")
+            return redirect('midtermassessment_list')
+    else:
+        form = MidtermTaskForm()
+    return render(request, 'midtermtask_form.html', {'form': form, 'assessment': assessment})
+
+@login_required
+def midtermtask_edit(request, pk):
+    task = get_object_or_404(MidtermTask, pk=pk)
+    if request.method == "POST":
+        form = MidtermTaskForm(request.POST, instance=task)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Vazifa yangilandi!")
+            return redirect('midtermassessment_list')
+    else:
+        form = MidtermTaskForm(instance=task)
+    return render(request, 'midtermtask_form.html', {'form': form, 'assessment': task.assessment})
+
+@login_required
+def midtermtask_delete(request, pk):
+    task = get_object_or_404(MidtermTask, pk=pk)
+    if request.method == "POST":
+        task.delete()
+        messages.success(request, "Vazifa o'chirildi!")
+        return redirect('midtermassessment_list')
+    return render(request, 'midtermtask_confirm_delete.html', {'task': task})
