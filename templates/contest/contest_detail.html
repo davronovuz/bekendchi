@@ -145,7 +145,7 @@
                             <span class="badge bg-warning">{{ submission.status }}</span>
                         {% endif %}
                     </td>
-                    <td>{{ submission.execution_time || "N/A" }} sekund</td>
+                    <td>{{ submission.execution_time|default:"N/A" }} sekund</td>
                     <td>
                         <button class="btn btn-sm btn-outline-primary" disabled>Batafsil</button>
                     </td>
@@ -192,13 +192,12 @@
     document.getElementById('submit-code').addEventListener('click', function() {
         var code = editor.getValue();
         var problemId = {{ problem.id }};
-        var language = document.getElementById('language-select').value; // Tanlangan til
+        var language = document.getElementById('language-select').value;
         var submitButton = document.getElementById('submit-code');
         var spinner = document.getElementById('spinner');
         var testResultsDiv = document.getElementById('test-results');
         var testResultsAccordion = document.getElementById('test-results-accordion');
 
-        // Animatsiya va holatni ko‘rsatish
         submitButton.disabled = true;
         spinner.style.display = 'inline-block';
         testResultsDiv.style.display = 'none';
@@ -213,12 +212,11 @@
             body: JSON.stringify({
                 code: code,
                 problem_id: problemId,
-                language: language // Tanlangan tilni qo‘shish
+                language: language
             }),
         })
         .then(response => response.json())
         .then(data => {
-            // Animatsiyani to‘xtatish
             submitButton.disabled = false;
             spinner.style.display = 'none';
 
@@ -267,6 +265,7 @@
             console.error('Xato:', error);
             submitButton.disabled = false;
             spinner.style.display = 'none';
+            alert('Serverda xato yuz berdi. Iltimos, qayta urinib ko‘ring.');
         });
     });
 </script>
