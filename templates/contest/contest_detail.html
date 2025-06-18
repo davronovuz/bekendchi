@@ -1,8 +1,61 @@
 {% extends 'base.html' %}
-{% block title %}{{ contest.title }}{% endblock %}
+{% block title %}{{ problem.title }}{% endblock %}
 
 {% block content %}
+<!-- Ace Editor CDN -->
+{% if can_submit %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ext-language_tools.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/mode-python.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/mode-c_cpp.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/mode-java.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/mode-javascript.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/mode-csharp.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/mode-ruby.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/mode-golang.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/mode-php.js"></script>
+{% endif %}
+
 <style>
+    .submission-result {
+        transition: all 0.5s ease;
+    }
+    .spinner {
+        display: none;
+        width: 16px;
+        height: 16px;
+        border: 3px solid #00adb5;
+        border-top: 3px solid transparent;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-right: 8px;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    pre {
+        background: #2c323b;
+        padding: 8px;
+        border-radius: 5px;
+        font-size: 0.85rem;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+    #editor {
+        height: 200px !important;
+    }
+    .accordion-button {
+        background: #222831 !important;
+        color: #e0e0e0 !important;
+        font-size: 0.9rem;
+    }
+    .accordion-button:not(.collapsed) {
+        background: #2c323b !important;
+    }
+    .accordion-body {
+        font-size: 0.85rem;
+    }
     .difficulty-easy {
         color: #28a745; /* Yashil - Oson */
         font-weight: bold;
@@ -15,97 +68,207 @@
         color: #dc3545; /* Qizil - Qiyin */
         font-weight: bold;
     }
-    .pagination .page-link {
-        background: #222831;
-        color: #00adb5;
-        border: 1px solid #00adb5;
-        margin: 0 2px;
-        transition: all 0.3s ease;
-    }
-    .pagination .page-link:hover {
-        background: #00adb5;
-        color: #121212;
-        box-shadow: 0 0 10px rgba(0, 173, 181, 0.8);
-    }
-    .pagination .page-item.active .page-link {
-        background: #00adb5;
-        color: #121212;
-        border: 1px solid #00adb5;
-    }
-    .card-body {
-        cursor: default; /* Card’ning o‘zi bosiladigan bo‘lmasligi uchun */
-    }
-    .btn-auth {
-        cursor: pointer; /* Tugma bosiladigan bo‘lishi uchun */
-    }
 </style>
 
 <div class="container">
-    <h1 class="neon-text text-center mb-4" data-aos="fade-up">{{ contest.title }}</h1>
-    <p class="text-center mb-3 text-muted" data-aos="fade-up">{{ contest.description }}</p>
-    <div class="text-center mb-3" data-aos="fade-up">
-        <p><strong>Boshlanish:</strong> {{ contest.start_time }}</p>
-        <p><strong>Tugash:</strong> {{ contest.end_time }}</p>
-        <p><strong>Holati:</strong>
-            {% if contest.is_ongoing %}
-                <span class="badge bg-success">Davom etmoqda</span>
-            {% else %}
-                <span class="badge bg-secondary">Yakunlangan</span>
+    <h1 class="neon-text mb-4" data-aos="fade-up">{{ problem.title }}</h1>
+    <div class="card text-white mb-4" data-aos="fade-up">
+        <div class="card-body">
+            <p>{{ problem.description|linebreaks }}</p>
+            <p><strong>Daraja:</strong>
+                <span class="difficulty-{{ problem.difficulty|lower }}">{{ problem.get_difficulty_display }}</span>
+            </p>
+            <p><strong>Vaqt Limiti:</strong> {{ problem.time_limit }} sekund</p>
+            <p><strong>Ball:</strong> {{ problem.points }}</p>
+            {% if problem.input_example %}
+            <p><strong>Kirish Misoli:</strong><br><pre>{{ problem.input_example }}</pre></p>
             {% endif %}
-        </p>
-    </div>
-    <div class="text-center mb-4" data-aos="fade-up">
-        <a href="{% url 'contest:leaderboard' contest.id %}" class="btn btn-auth">Qatnashuvchilar ro'yxati</a>
-    </div>
-    <h3 class="neon-text mb-3" data-aos="fade-up">Masalalar</h3>
-    <div class="row">
-        {% for problem in page_obj %}
-        <div class="col-lg-4 col-md-6 col-sm-12 mb-3" data-aos="fade-up">
-            <div class="card text-white">
-                <div class="card-body">
-                    <h5 class="card-title">{{ forloop.counter|add:page_obj.start_index|add:-1 }}. {{ problem.title }}</h5>
-                    <p class="card-text">
-                        <strong>Daraja:</strong>
-                        <span class="difficulty-{{ problem.difficulty|lower }}">{{ problem.get_difficulty_display }}</span><br>
-                        <strong>Vaqt Limiti:</strong> {{ problem.time_limit }} sekund<br>
-                        <strong>Ball:</strong> {{ problem.points }}
-                    </p>
-                    <a href="{% url 'contest:problem_detail' problem.id %}" class="btn btn-auth">Yechish</a>
-                </div>
-            </div>
+            {% if problem.output_example %}
+            <p><strong>Chiqish Misoli:</strong><br><pre>{{ problem.output_example }}</pre></p>
+            {% endif %}
         </div>
-        {% empty %}
-        <div class="col-12 text-center">
-            <p class="text-muted">Hozirda masalalar yo‘q.</p>
-        </div>
-        {% endfor %}
     </div>
 
-    <!-- Pagination -->
-    {% if page_obj.has_other_pages %}
-    <nav aria-label="Page navigation" class="mt-4">
-        <ul class="pagination justify-content-center">
-            {% if page_obj.has_previous %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
-                    <span aria-hidden="true">«</span>
-                </a>
-            </li>
-            {% endif %}
-            {% for num in page_obj.paginator.page_range %}
-            <li class="page-item {% if page_obj.number == num %}active{% endif %}">
-                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-            </li>
-            {% endfor %}
-            {% if page_obj.has_next %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
-                    <span aria-hidden="true">»</span>
-                </a>
-            </li>
-            {% endif %}
-        </ul>
-    </nav>
+    {% if can_submit %}
+    <h3 class="neon-text mb-3" data-aos="fade-up">Kod Yozish</h3>
+    <div data-aos="fade-up">
+        <!-- Til tanlash dropdown -->
+        <div class="mb-3">
+            <label for="language-select" class="form-label text-white">Dasturlash tilini tanlang:</label>
+            <select id="language-select" class="form-select bg-dark text-white" style="width: 200px;">
+                <option value="python">Python</option>
+                <option value="c_cpp">C++</option>
+                <option value="java">Java</option>
+                <option value="javascript">JavaScript</option>
+                <option value="csharp">C#</option>
+                <option value="ruby">Ruby</option>
+                <option value="golang">Go</option>
+                <option value="php">PHP</option>
+            </select>
+        </div>
+        <!-- Ace Editor -->
+        <div id="editor" style="width: 100%; border: 1px solid #00adb5; border-radius: 5px;"></div>
+        <input type="hidden" name="code" id="code-input">
+        <button id="submit-code" class="btn btn-auth mt-3">
+            <span class="spinner" id="spinner"></span>Yuborish
+        </button>
+    </div>
+    {% else %}
+    <div class="alert alert-warning" data-aos="fade-up">
+        Bu contest yakunlangan. Siz savollarni ko‘rishingiz mumkin, lekin yangi yechim yubora olmaysiz.
+    </div>
+    {% endif %}
+
+    <h3 class="neon-text mt-4 mb-3" data-aos="fade-up">Sizning Yuborishlaringiz</h3>
+    <div class="table-responsive submission-result" data-aos="fade-up">
+        <table class="table table-dark table-bordered" id="submission-table">
+            <thead>
+                <tr>
+                    <th>Yuborilgan Vaqt</th>
+                    <th>Kod</th>
+                    <th>Holati</th>
+                    <th>Ishlash Vaqti</th>
+                    <th>Batafsil</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% forEach submission in submissions %}
+                <tr>
+                    <td>{{ submission.submitted_at }}</td>
+                    <td><pre>{{ submission.code|truncatechars:50 }}</pre></td>
+                    <td>
+                        {% if submission.status == "ACCEPTED" %}
+                            <span class="badge bg-success">{{ submission.status }}</span>
+                        {% elif submission.status == "WRONG_ANSWER" %}
+                            <span class="badge bg-danger">{{ submission.status }}</span>
+                        {% else %}
+                            <span class="badge bg-warning">{{ submission.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ submission.execution_time || "N/A" }} sekund</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary" disabled>Batafsil</button>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">Hali submission yo‘q.</td>
+                </tr>
+                {% endforEach %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if can_submit %}
+    <div id="test-results" class="mt-3" style="display: none;" data-aos="fade-up">
+        <h3 class="neon-text mb-2">Test Case Natijalari</h3>
+        <div class="accordion" id="test-results-accordion">
+        </div>
+    </div>
     {% endif %}
 </div>
+
+{% if can_submit %}
+<script>
+    // Ace Editor sozlamalari
+    ace.require("ace/ext/language_tools");
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/monokai");
+    editor.session.setMode("ace/mode/python"); // Dastlabki til Python
+    editor.setOptions({
+        enableBasicAutocompletion: true,
+        enableSnippets: true,
+        enableLiveAutocompletion: true,
+        fontSize: "14px",
+    });
+
+    // Til tanlash o‘zgarishi
+    document.getElementById('language-select').addEventListener('change', function() {
+        var selectedLanguage = this.value;
+        editor.session.setMode(`ace/mode/${selectedLanguage}`);
+    });
+
+    // Kodni yuborish
+    document.getElementById('submit-code').addEventListener('click', function() {
+        var code = editor.getValue();
+        var problemId = {{ problem.id }};
+        var language = document.getElementById('language-select').value; // Tanlangan til
+        var submitButton = document.getElementById('submit-code');
+        var spinner = document.getElementById('spinner');
+        var testResultsDiv = document.getElementById('test-results');
+        var testResultsAccordion = document.getElementById('test-results-accordion');
+
+        // Animatsiya va holatni ko‘rsatish
+        submitButton.disabled = true;
+        spinner.style.display = 'inline-block';
+        testResultsDiv.style.display = 'none';
+        testResultsAccordion.innerHTML = '';
+
+        fetch("{% url 'contest:submit_code' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+            body: JSON.stringify({
+                code: code,
+                problem_id: problemId,
+                language: language // Tanlangan tilni qo‘shish
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Animatsiyani to‘xtatish
+            submitButton.disabled = false;
+            spinner.style.display = 'none';
+
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+
+            // Jadvalga yangi submission qo‘shish
+            var table = document.getElementById('submission-table').getElementsByTagName('tbody')[0];
+            var row = table.insertRow(0);
+            row.classList.add('submission-result');
+            row.innerHTML = `
+                <td>${new Date().toLocaleString()}</td>
+                <td><pre>${data.code.substring(0, 50)}${data.code.length > 50 ? '...' : ''}</pre></td>
+                <td><span class="badge ${data.status === 'ACCEPTED' ? 'bg-success' : data.status === 'WRONG_ANSWER' ? 'bg-danger' : 'bg-warning'}">${data.status}</span></td>
+                <td>${data.execution_time ? data.execution_time.toFixed(2) : 'N/A'} sekund</td>
+                <td><button class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#test-result-${table.rows.length}">Batafsil</button></td>
+            `;
+
+            // Test case natijalarini ko‘rsatish
+            if (data.test_results && data.test_results.length > 0) {
+                testResultsDiv.style.display = 'block';
+                data.test_results.forEach((result, index) => {
+                    var accordionItem = `
+                        <div class="accordion-item bg-dark text-white border border-primary">
+                            <h2 class="accordion-header" id="heading-${index}">
+                                <button class="accordion-button collapsed bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-${index}" aria-expanded="false" aria-controls="collapse-${index}">
+                                    Test Case ${index + 1}: ${result.status}
+                                </button>
+                            </h2>
+                            <div id="collapse-${index}" class="accordion-collapse collapse" aria-labelledby="heading-${index}" data-bs-parent="#test-results-accordion">
+                                <div class="accordion-body">
+                                    <p><strong>Kirish:</strong><br><pre>${result.input}</pre></p>
+                                    <p><strong>Kutilgan Chiqish:</strong><br><pre>${result.expected_output}</pre></p>
+                                    <p><strong>Haqiqiy Chiqish:</strong><br><pre>${result.actual_output}</pre></p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    testResultsAccordion.insertAdjacentHTML('beforeend', accordionItem);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Xato:', error);
+            submitButton.disabled = false;
+            spinner.style.display = 'none';
+        });
+    });
+</script>
+{% endif %}
 {% endblock %}
